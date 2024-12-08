@@ -48,54 +48,52 @@ const MaintenanceSchedulePage = () => {
       {/* Lịch bảo trì */}
       <div className="bg-white p-4 rounded-lg flex flex-col space-y-2 drop-shadow">
         <h2 className="text-2xl font-bold text-blue">Maintenance Schedule</h2>
-        <ul className="space-y-2 overflow-y-auto max-h-120">
-          {maintenancePlans.length === 0 ? (
-            <li className="text-gray-500">Chưa có kế hoạch bảo trì nào.</li>
+        {maintenancePlans.length === 0 ? (
+            <p className="text-gray-500">Chưa có kế hoạch bảo trì nào.</p>
           ) : (
-            maintenancePlans.map((plan, index) => (
-              <div
-                className="flex flex-col space-y-2 p-2 drop-shadow bg-white rounded-lg"
-              >
-                {/* Tiêu đề và thông tin */}
-                <div className="flex justify-between items-center">
-                  <span className="font-bold text-gray-800 text-xl">{plan.title}</span>
-                  <button
-                    className="text-red-500 hover:text-red-700"
-                    onClick={() => handleDeletePlan(index)}
-                  >
-                    <TrashIcon className="h-5 w-5" />
-                  </button>
-                </div>
+          maintenancePlans.map((plan, index) => (
+            <div
+              className="flex flex-col space-y-2 p-2 drop-shadow bg-white rounded-lg overflow-y-auto max-h-120"
+            >
+              {/* Tiêu đề và thông tin */}
+              <div className="flex justify-between items-center">
+                <span className="font-bold text-gray-800 text-xl">{plan.title}</span>
+                <button
+                  className="text-red-500 hover:text-red-700"
+                  onClick={() => handleDeletePlan(index)}
+                >
+                  <TrashIcon className="h-5 w-5" />
+                </button>
+              </div>
 
-                {/* Thông tin "Bắt đầu từ" và "Thời gian bảo trì" */}
-                <div className="flex justify-between text-xs">
-                  <span className="font-bold text-sm text-black">Content</span>
-                  <div className="flex flex-row">
-                    <span className="italic text-gray-400 inline w-32"> {plan.startDate}</span> {/* Đặt lớp tailwind vào đây */}
-                    <div className="flex flex-row space-x-2 justify-start w-44">
-                      <span><strong>Created by:</strong></span> 
-                      <span className="text-gray-400 inline">{plan.createdBy}</span>
-                    </div>
-                    <div className="flex flex-row space-x-2 justify-end w-28">
-                      <span><strong>Status:</strong></span> 
-                      <span className="text-gray-400 inline">{plan.status}</span>
-                    </div>
-                    <div className="flex flex-row space-x-2 justify-end w-28">
-                      <span><strong>Duration:</strong></span> 
-                      <span className="text-gray-400 inline">{plan.duration} hours</span>
-                    </div>
+              {/* Thông tin "Bắt đầu từ" và "Thời gian bảo trì" */}
+              <div className="flex justify-between text-xs">
+                <span className="font-bold text-sm text-black">Content</span>
+                <div className="flex flex-row">
+                  <span className="italic text-gray-400 inline w-32"> {plan.startDate}</span> {/* Đặt lớp tailwind vào đây */}
+                  <div className="flex flex-row space-x-2 justify-start w-44">
+                    <span><strong>Created by:</strong></span> 
+                    <span className="text-gray-400 inline">{plan.createdBy}</span>
+                  </div>
+                  <div className="flex flex-row space-x-2 justify-end w-28">
+                    <span><strong>Status:</strong></span> 
+                    <span className="text-gray-400 inline">{plan.status}</span>
+                  </div>
+                  <div className="flex flex-row space-x-2 justify-end w-28">
+                    <span><strong>Duration:</strong></span> 
+                    <span className="text-gray-400 inline">{plan.duration} hours</span>
                   </div>
                 </div>
-
-
-                {/* Nội dung */}
-                <div className="bg-gray-200 p-1 text-gray-700 text-sm">
-                  {plan.content}
-                </div>
               </div>
-            ))
-          )}
-        </ul>
+
+
+              {/* Nội dung */}
+              <div className="bg-gray-200 p-1 text-gray-700 text-sm">
+                {plan.content}
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Form Thêm Kế Hoạch Bảo Trì */}
