@@ -13,7 +13,7 @@ const AdminPrintingHistoryItem = ({ docName, printTime, studentName, copies, pla
                 <p className="font-normal text-gray-dark text-xs">{printTime}</p>
             </div>
             <div className="flex flex-row space-x-8 font-normal text-gray-dark text-xs">
-                <div className="flex flex-row space-x-[6px] cursor-pointer" onClick={() => {navigate(`student?id=${studentId}&name=${studentName}`)}} >
+                <div className="flex flex-row space-x-[6px] cursor-pointer" onClick={() => {navigate(`student?studentId=${studentId}`)}} >
                     <PersonalSvg className="w-4 h-4" fill="black" />
                     <p>{studentName}</p>
                 </div>

@@ -7,8 +7,16 @@ import { ReactComponent as PlusRectangleSvg } from "../assets/svgs/plus-rectangl
 import { ReactComponent as PrinterSvg } from "../assets/svgs/printer.svg";
 import { ReactComponent as HistorySvg } from "../assets/svgs/log.svg";
 import { ReactComponent as LogoutSvg } from "../assets/svgs/log_out.svg"
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
+  const navigate = useNavigate()
+  
+  const logout = () => {
+    localStorage.removeItem('studentId')
+    navigate('/')
+  }
+
   return (
     <div 
         className="flex flex-col space-y-6 h-screen w-96 p-6 text-base items-center bg-cover bg-center font-normal text-black"
@@ -26,10 +34,10 @@ const Sidebar = () => {
         <SideBarLink name="Buy more paper" hrefLink="buy_more_paper" Icon={PlusRectangleSvg} />
       </ul>
       <div className="w-full h-[1px] bg-[#0388B4]"/>
-      <a href="/" className="flex flex-row space-x-3 justify-left px-4 py-3 text-red font-normal w-full">
+      <div onClick={logout} className="flex flex-row space-x-3 justify-left px-4 py-3 text-red font-normal w-full cursor-pointer">
           <LogoutSvg color="red" />
           <p>Log out</p>
-      </a>
+      </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Header from "../../../components/Header";
 
 import { ReactComponent as LookupSvg } from "../../../assets/svgs/lookup.svg";
@@ -8,29 +8,8 @@ import { ReactComponent as BookSvg } from "../../../assets/svgs/book.svg";
 import { ReactComponent as CopySvg } from "../../../assets/svgs/copy.svg";
 
 import AdminPrintingHistoryItem from "../../../components/AdminPrintingHistoryItem";
-
-const printedDocs = [
-  { docName: "Capstone_Project_Autumn_2023.pdf", printTime: "20:16PM 13/10/2024", 
-    studentName: "Tran Quoc Trung", copies: 10, place: "B1-01", studentId: "2252859" },
-  { docName: "HK241-Assignment-2-Network-Design-For-A-Company.pdf", printTime: "20:16PM 13/10/2024", 
-      studentName: "Tran Quoc Trung", copies: 10, place: "B1-01", studentId: "2252859" },
-  { docName: "01-convexhull.pdf", printTime: "20:16PM 13/10/2024", 
-      studentName: "Tran Quoc Hieu", copies: 1, place: "B1-03", studentId: "2252217" },
-  { docName: "09_Ch9 Software Testing_ny.pdf", printTime: "20:16PM 13/10/2024", 
-      studentName: "Truong Tuan Anh", copies: 10, place: "B1-01", studentId: "2252850" },
-  { docName: "08_Ch8 Implementation.pdf", printTime: "20:16PM 13/10/2024", 
-      studentName: "Tran Quoc Trung", copies: 10, place: "B1-01", studentId: "2252859" },
-  { docName: "07_Ch7 Architectural Design.pdf", printTime: "20:16PM 13/10/2024", 
-      studentName: "Tran Quoc Trung", copies: 7, place: "B1-01", studentId: "2252859" },
-  { docName: "06_Ch6 System Modeling.pdf", printTime: "20:16PM 13/10/2024", 
-      studentName: "Tran Quoc Hieu", copies: 10, place: "B1-01", studentId: "22522859" },
-  { docName: "05_Ch5_Introduction_OOP.pdf", printTime: "20:16PM 13/10/2024", 
-      studentName: "Tran Quoc Trung", copies: 10, place: "B1-01", studentId: "2252859" },
-  { docName: "03_Ch3_4 Requirements Engineering.pdf", printTime: "20:16PM 13/10/2024", 
-      studentName: "Tran Quoc Trung", copies: 10, place: "B1-01", studentId: "2252859" },
-  { docName: "Capstone_Project_Autumn_2023.pdf", printTime: "20:16PM 13/10/2024", 
-      studentName: "Tran Quoc Trung", copies: 10, place: "B1-01", studentId: "2252859" },    
-]
+import AdminService from "../../../API/admin";
+import { hard_code_admin_printing_history } from "../../../hardData";
 
 const filterModeList = ["By area", "By printer", "All"];
 const filterAreaList = ["B1", "A4", "B4", "C4", "C6", "B10"];
@@ -42,12 +21,19 @@ const filterPrinterList = ["B1-01", "B1-02", "B1-03", "B1-04", "B1-05",
 const filterTimeList = ["All", "Since 1 day", "Since 1 week", "Since 1 month", "Since 3 month", "Since 1 year"]
 
 const PrintingHistoryPage = () => {
+  // Filter option
   const [filterMode, setFilterMode] = useState("By area");
   const [filterOptionList, setFilterOptionList] = useState(filterAreaList);
-  const [filterOption, setFilterOption] = useState("B1");
+  const [filterArea, setFilterArea] = useState("B1");
+  const [filterPrinter, setFilterPrinter] = useState("B1-01");
   const [filterTime, setFilterTime] = useState("All");
-
   const [filterStudentId, setFilterStudentId] = useState("");
+
+  // Printing history
+  const [printedDocs, setPrintedDocs] = useState([])
+
+  // Loading
+  const [loadingPrintedDocs, setLoadingPrintedDocs] = useState(false)
 
   const handleOnFilterMode = (event) => {
     setFilterMode(event.target.value);
@@ -60,8 +46,12 @@ const PrintingHistoryPage = () => {
     }
   }
   
-  const handleOnFilterOption = (event) => {
-    setFilterOption(event.target.value);
+  const handleOnFilterArea = (event) => {
+    setFilterArea(event.target.value);
+  }
+
+  const handleOnFilterPrinter = (event) => {
+    setFilterPrinter(event.target.value);
   }
   
   const handleOnFilterTime = (event) => {
@@ -71,6 +61,33 @@ const PrintingHistoryPage = () => {
   const handleStudentIdFilter = (event) => {
     setFilterStudentId(event.target.value);
   }
+
+  // Get printed Docs
+  const getPrintedDocs = useCallback(async () => {
+    setLoadingPrintedDocs(true)
+
+    // const fetchData = {
+    //   printer: filterMode === "By printer" ? filterArea : null,
+    //   area: filterMode === "By area" ? filterMode : null,
+    //   studentId: filterStudentId
+    // }
+    // AdminService.getPrintingHistory(fetchData)
+    // .then((res) => {
+    //   const data = res.data.payload
+    //   setPrintedDocs(data.printHistory)
+    //   // Continue
+    // })
+    setPrintedDocs(hard_code_admin_printing_history)
+
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    await sleep(2000)
+
+    setLoadingPrintedDocs(false)
+  }, [])
+
+  useEffect(() => {
+    getPrintedDocs();
+  }, [filterMode, filterArea, filterPrinter, getPrintedDocs])
 
   return (
     <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full">
@@ -95,10 +112,14 @@ const PrintingHistoryPage = () => {
                 {
                   filterMode !== "All" &&
                   <div className="w-[50%] flex flex-row items-center justify-between py-2 px-3 drop-shadow rounded-lg bg-white">
-                      <select value={filterOption} onChange={handleOnFilterOption} className="w-full focus:outline-none">
-                      {filterOptionList.map((item, index) => (
-                        <option className="w-full py-2 px-3" value={item}>{item}</option>
-                      ))}
+                      <select 
+                        value={filterMode === "By area" ? filterArea : filterPrinter} 
+                        onChange={filterMode === "By area" ? handleOnFilterArea : handleOnFilterPrinter} 
+                        className="w-full focus:outline-none"
+                      >
+                        {filterOptionList.map((item, index) => (
+                          <option className="w-full py-2 px-3" value={item}>{item}</option>
+                        ))}
                     </select>
                   </div>
                 }
@@ -131,7 +152,7 @@ const PrintingHistoryPage = () => {
                   placeholder="Enter Student Id..."
                   className="text-sm font-normal text-gray-dark focus:outline-none"
                 />
-                <LookupSvg className="w-5 h-5" fill="#808080" />
+                <LookupSvg className="w-5 h-5 cursor-pointer" fill="#808080" onClick={getPrintedDocs}/>
               </div>
             </div>
 
@@ -175,12 +196,18 @@ const PrintingHistoryPage = () => {
         
         </div>
 
-        <div className="flex flex-col space-y-3 items-start h-[840px] flex-nowrap overflow-y-scroll w-[58%] p-3 bg-white rounded-lg drop-shadow">
-          <p className="text-2xl font-bold text-blue">Printing History</p>
-          {printedDocs.map((item, index) => (
-            <AdminPrintingHistoryItem {...item} />
-          ))}
-        </div>
+        {loadingPrintedDocs ? 
+          <div className="h-[840px] w-[58%] bg-white rounded-lg drop-shadow flex justify-center items-center">
+            <p className="font-bold text-4xl text-blue">Loading...</p>
+          </div> 
+          :
+          <div className="flex flex-col space-y-3 items-start h-[840px] flex-nowrap overflow-y-scroll w-[58%] p-3 bg-white rounded-lg drop-shadow">
+            <p className="text-2xl font-bold text-blue">Printing History</p>
+            {printedDocs.map((item, index) => (
+              <AdminPrintingHistoryItem {...item} />
+            ))}
+          </div>
+        }
       </div>
     </div>
   );

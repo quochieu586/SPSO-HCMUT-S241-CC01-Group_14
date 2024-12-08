@@ -1,9 +1,21 @@
 import HCMUTLogo from "../../assets/images/HCMUT_official_logo.png";
 import HMCUTLoginImage from "../../assets/images/hcmut_libary_image.png"
 import HCMUTImage from "../../assets/images/HCMUT_logo.png"
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+    const navigate = useNavigate()
+
+    const studentLogin = () => {
+        localStorage.setItem('studentId', '2252858')
+
+        navigate('/user/student_information')   
+    }
+
+    const adminLogin = () => {
+        navigate('/admin/manage_system')
+    }
+
     return (
         <div className="flex-1 h-screen">
             <div className="flex w-full bg-blue px-4 justify-start">
@@ -23,17 +35,17 @@ const LoginPage = () => {
                         <p className="text-2xl font-bold text-[#002799]">Log in using your account on:</p>
                     </div>
                     <div className="w-full flex flex-col space-y-[6px]">
-                        <NavLink className="flex flex-row space-x-4 w-full py-3 items-center justify-center rounded-lg border border-[#DDDDDD]"
-                            to="/user/student_information"
+                        <div className="flex flex-row space-x-4 w-full py-3 items-center justify-center rounded-lg border border-[#DDDDDD] cursor-pointer"
+                            onClick={studentLogin}
                         >
                             <img src={HCMUTImage} alt="HCMUT_logo_login" className="w-7 h-7"/>
                             <p className="text-black font-normal text-sm">HCMUT (HCMUT account)</p>
-                        </NavLink>
-                        <NavLink className="w-full py-3 flex items-center justify-center rounded-lg border border-[#DDDDDD]"
-                            to="/admin/manage_system"
+                        </div>
+                        <div className="w-full py-3 flex items-center justify-center rounded-lg border border-[#DDDDDD] cursor-pointer"
+                            onClick={adminLogin}
                         >
                             <p className="text-black font-normal text-sm">Admin </p>
-                        </NavLink>
+                        </div>
                     </div>
                     <div className="bg-gray h-[1px] w-full"/>
                 </div>
