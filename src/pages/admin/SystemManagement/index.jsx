@@ -85,7 +85,7 @@ const SystemManagementPage = () => {
             <p className="text-lg font-bold">Printable File Types</p>
             
             {/* File Types List */}
-            <div className="overflow-auto max-h-[100px]">
+            <div className="overflow-auto max-h-28 flex flex-col space-y-2">
               <div className="grid grid-cols-3 gap-3">
                 {fileTypes.map((fileType, index) => (
                   <div key={index} className="flex flex-col">
@@ -104,55 +104,65 @@ const SystemManagementPage = () => {
                     <hr className="border-t-0.5 border-[#D9D9D9] mb-px" />
                   </div>
                 ))}
+                <div className="flex flex-col">
+                  <div className="flex flex-row justify-between items-center">
+                    <input
+                      type="text"
+                      value={newFileType}
+                      onChange={(e) => setNewFileType(e.target.value)}
+                      className="text-[16px] px-2 focus:outline-none w-full"
+                      placeholder="New file type"
+                    />
+                    <button
+                      onClick={handleAdd}
+                      className="text-green-500 hover:text-green-700 text-[16px]"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div className="w-full h-[1px] bg-gray" />
+                </div>
               </div>
+              <div className="w-full h-[1px] bg-gray" />
             </div>
 
             {/* Add File Type Input and Button */}
-            <div className="flex space-x-2 mt-2 mb-2">
-              <input
-                type="text"
-                value={newFileType}
-                onChange={(e) => setNewFileType(e.target.value)}
-                className="w-[130] h-[32px] border border-gray-300 rounded-md text-[16px] px-2"
-                placeholder="Enter new file type"
-              />
-              <button
-                onClick={handleAdd}
-                className="text-green-500 hover:text-green-700 text-[16px]"
-              >
-                +
-              </button>
-            </div>
             {/* Underline for "Add File Type" */}
-            <hr className="border-t-0.5 border-[#D9D9D9] mb-2" />
 
           {/* </div> */}
 
-            {/* A4 Paper Quantity Section */}
-            <div className="w-full flex flex-row space-x-4 justify-start items-center">
-              <p className="text-lg font-bold">A4 Paper Quantity (Scheduled):</p>
+          {/* A4 Paper Quantity Section */}
+          <div className="w-full flex flex-col space-y-1">
+            <div className="flex flex-row space-x-4 justify-start items-center">
+              <p className="text-lg font-bold">Periodcally A4 Receive:</p>
               <input
                 type="number"
                 value={a4Count}
                 onChange={(e) => setA4Count(e.target.value)}
-                className="text-center border border-gray-300 rounded-md text-lg px-2"
+                className="text-center border border-gray-300 rounded-md text-base"
               />
             </div>
-            {/* Thời gian nhận định kỳ Section */}
-          <div className="flex flex-row justify-start items-center space-x-4">
-            <p className="text-lg font-bold">Reset page mock:</p>
-            <select
-              value={periodicTime}
-              onChange={(e) => setPeriodicTime(e.target.value)}
-              className="text-center text-[#808080] border border-gray-300 rounded-md text-lg p-1"
-            >
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-            </select>
+            <div className="w-full h-[1px] bg-gray"/>
           </div>
+          
+          {/* Thời gian nhận định kỳ Section */}
+          <div className="flex flex-col space-y-1">
+            <div className="flex flex-row justify-start items-center space-x-4">
+              <p className="text-lg font-bold">Reset page mock:</p>
+              <select
+                value={periodicTime}
+                onChange={(e) => setPeriodicTime(e.target.value)}
+                className="text-center text-[#808080] border border-gray-300 rounded-md text-base py-1 px-2"
+              >
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+            <div className="h-[1px] w-full bg-gray"/>
           </div>
         </div>
+      </div>
 
         {/* Section 2: System Status */}
         <div className="w-[50%] h-full bg-white shadow-lg rounded-lg p-4 flex flex-col space-y-2">
@@ -215,22 +225,22 @@ const SystemManagementPage = () => {
               {/* Printer Info */}
               <div className="flex flex-col justify-between h-full p-2">
                 <div className="flex">
-                  <p className="text-[14px] font-bold pr-2">Printer: </p>
-                  <p className="text-[12px] text-[#808080]">{machine.name}</p> {   }
+                  <p className="text-sm font-bold pr-2 w-16">Printer: </p>
+                  <p className="text-sm text-[#808080]">{machine.name}</p> {   }
                 </div>
                 <hr className="border-t-[0.5px] border-[#D9D9D9] mb-2" />
 
                 <div className="flex">
-                  <p className="text-[14px] font-bold pr-2">Status: </p>
-                  <p className="text-[12px]" style={{ color: machine.color }}>
+                  <p className="text-sm font-bold pr-2 w-16">Status: </p>
+                  <p className="text-sm" style={{ color: machine.color }}>
                     {machine.status}
                   </p>
                 </div>
                 <hr className="border-t-[0.5px] border-[#D9D9D9] mb-2" />
 
                 <div className="flex">
-                  <p className="text-[14px] font-bold pr-2">Notes: </p>
-                  <p className="text-[12px] text-[#808080]">None</p>
+                  <p className="text-sm font-bold pr-2 w-16">Notes: </p>
+                  <p className="text-sm text-[#808080]">None</p>
                 </div>
                 <hr className="border-t-[0.5px] border-[#D9D9D9] mb-2" />
 

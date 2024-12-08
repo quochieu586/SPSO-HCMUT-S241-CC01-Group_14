@@ -3,6 +3,7 @@ import Header from "../../components/Header";
 import "./fonts.css";
 import TransactionCard from "./TransactionCard";
 import { useLocation } from "react-router-dom";
+import { ReactComponent as PrinterIcon } from "../../assets/svgs/printer.svg"
 
 const TransactionHistoryPage = () => {
   const { state } = useLocation();
@@ -55,15 +56,17 @@ const TransactionHistoryPage = () => {
         {/* Totals */}
         <div className="flex flex-row justify-between space-x-4 mt-6">
           {/* Total A4 Papers */}
-          <div className="flex flex-row items-center bg-white p-4 rounded-md shadow-xl w-2/5">
-            <div className="flex flex-col items-end flex-grow">
+          <div className="flex flex-row justify-between items-center bg-white py-3 px-6 rounded-md shadow-xl w-2/5">
+            <PrinterIcon className="w-16 h-16" fill="#808080"/>
+            <div className="flex flex-col items-end">
               <div className="text-blue font-bold text-xl mb-3">Number of A4</div>
               <div className="text-gray-600 text-2xl font-bold">{totalA4Papers}</div>
             </div>
           </div>
           {/* Total Transactions */}
-          <div className="flex flex-row items-center bg-white p-4 rounded-md shadow-xl w-2/5">
-            <div className="flex flex-col items-end flex-grow">
+          <div className="flex flex-row items-center justify-between bg-white py-3 px-6 rounded-lg shadow-xl w-2/5">
+            <PrinterIcon className="w-16 h-16" fill="#808080"/>
+            <div className="flex flex-col items-end">
               <div className="text-blue font-bold text-xl mb-3">Number of transactions</div>
               <div className="text-gray-600 text-2xl font-bold">{totalTransactions}</div>
             </div>

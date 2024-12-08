@@ -158,7 +158,7 @@ const PrintingHistoryPage = () => {
 
             <div className="flex flex-row justify-between items-center p-6 w-full bg-white rounded-lg drop-shadow" >
               <div className="flex flex-col space-y-1 items-start">
-                <p className="text-lg font-semibold text-blue">Number of users</p>
+                <p className="text-lg font-semibold text-blue">Number of printers</p>
                 <p className="text-xl font-bold text-black">2357</p>
               </div>
               <PrinterSvg className="w-[60px] h-[60px]" fill="#0388B4" />
@@ -167,7 +167,7 @@ const PrintingHistoryPage = () => {
             <div className="flex flex-row justify-between items-center p-6 w-full bg-white rounded-lg drop-shadow" >
               <CopySvg className="w-[60px] h-[60px]" fill="#0388B4" />
               <div className="flex flex-col space-y-1 items-end">
-                <p className="text-lg font-semibold text-blue">Number of users</p>
+                <p className="text-lg font-semibold text-blue">Number of consumed pages</p>
                 <p className="text-xl font-bold text-black">2357</p>
               </div>
             </div>
