@@ -6,6 +6,7 @@ import PrintingHistoryItem from "../../components/PrintingHistoryItem"
 import WaitingItem from "../../components/WaitingItem";
 import ConfirmModal from "./modal";
 import { sampleWaitingFiles, samplePrintedFiles, sampleAllowedFormats } from "./hardcode_data";
+import { useNavigate } from "react-router-dom";
 
 const PrintDocumentPage = () => {
   const fileInputRef = useRef(null);
@@ -13,6 +14,7 @@ const PrintDocumentPage = () => {
   const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
   const [waitingFiles, setWaitingFiles] = useState(sampleWaitingFiles);
   const [currentWaitingFile, setCurrentWaitingFile] = useState(null);
+  const navigate = useNavigate();
   
   const handleOpenFile = () => {
     fileInputRef.current.click();
@@ -33,8 +35,12 @@ const PrintDocumentPage = () => {
     if (!file) return;
 
     if (isAllowedFormat(file.name)) {
-      alert("Uploaded file " + file.name);
-      console.log(file);
+      try {
+        navigate("printing_mode", {state: { file: file }})
+        // console.log(file)
+      } catch (err) {
+        console.error(err);
+      }
     } else {
       alert("File not supported");
     }
