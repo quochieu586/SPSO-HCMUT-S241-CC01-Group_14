@@ -2,6 +2,14 @@ import React, { useState } from "react";
 import Header from "../../../components/Header";
 import { ReactComponent as PrinterIcon } from "../../../assets/svgs/printer.svg"
 
+const filterPrinterList = [
+  "B1-01", "B1-02", "B1-03", "B1-04", "B1-05", 
+  "A4-01", "A4-02", "A4-03", 
+  "B4-01", "B4-02", 
+  "C4-01", "C4-02", 
+  "C6-01", "B10-01"
+];
+
 const SystemManagementPage = () => {
   // State to manage file types
   const [fileTypes, setFileTypes] = useState([
@@ -42,9 +50,9 @@ const SystemManagementPage = () => {
   const [a4Count, setA4Count] = useState(50); // Default value for A4 paper count
 
   const [machines, setMachines] = useState(
-    Array(12).fill(null).map((_, index) => ({
+    filterPrinterList.map((printer, index) => ({
       id: index + 1,
-      name: `Printer ${index + 1}`,  // Dynamic printer name
+      name: printer,  // Dynamic printer name
       status: "Active", // Initial status is "Active"
       color: "#07C656", // Color when "Active"
       buttonText: "Stop", // Initial button text is "Stop"
