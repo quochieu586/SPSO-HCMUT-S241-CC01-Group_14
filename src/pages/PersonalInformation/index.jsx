@@ -14,41 +14,33 @@ const PersonalInformationPage = () => {
   const [studentId, setStudentId] = useState(null)
   const [AvatarImage, setAvatarImage] = useState(null)
 
-  const getPersonalInformation = async () => {
-    UserService.getPersonalInformation()
-    .then((res) => {
-      const fetchPersonalInfo = res.data.payload;
-      setPersonalInfo(fetchPersonalInfo);
-    })
-  }
-
-  const getPrintingHistory = async () => {
-    UserService.getPrintingHistory()
-    .then((res) => {
-      const fetchPrintingHistory = res.data.payload;
-      setPrintingHistory(fetchPrintingHistory)
-    })
-  }
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
 
         // Fetch data here
-        // getPersonalInformation();
-        // getPrintingHistory();
+        await UserService.getPersonalInformation()
+        .then((res) => {
+          const fetchPersonalInfo = res.data.payload;
+          setPersonalInfo(fetchPersonalInfo);
+        }).catch((err) => {
+          console.error(err);
+          setPersonalInfo(hard_code_personal_data);
+        })
 
-        const personalData = hard_code_personal_data;
-        const printHistory = hard_code_printing_history_item;
-        const studentId = localStorage.getItem('studentId')
-
-        setPersonalInfo(personalData)
-        setPrintingHistory(printHistory)
+        await UserService.getPrintingHistory()
+        .then((res) => {
+          const fetchPrintingHistory = res.data.payload;
+          setPrintingHistory(fetchPrintingHistory)
+        }).catch((err) => {
+          console.error(err);
+          setPrintingHistory(hard_code_printing_history_item);
+        })
+        
+        const studentId = localStorage.getItem('studentId');
         setStudentId(studentId)
         setAvatarImage(AvtSvg)
-
-        console.log("personalData: ", personalData)
       } catch (error) {
         console.error("Error when loading page:", error)
       } finally {

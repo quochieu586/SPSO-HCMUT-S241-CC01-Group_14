@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const ADMIN_BASE_URL = 'http://localhost:5000/api/admin'
+const BASE_URL = process.env.BASE_URL
 
 const adminAPI = axios.create({
-    baseURL: ADMIN_BASE_URL,
+    baseURL: `${BASE_URL}/admin`,
 })
 
 export default adminAPI

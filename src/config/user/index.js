@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const BASE_URL = 'http://localhost:5000/api'
+const BASE_URL = process.env.BASE_URL || "http://127.0.0.1:8000"
 
 const userAPI = axios.create({
-    baseURL: BASE_URL,
+    baseURL: `${BASE_URL}/user`,
 })
 
 userAPI.interceptors.request.use((config) => {
