@@ -3,6 +3,7 @@ import Header from "../../components/Header";
 import "./fonts.css";
 import TransactionCard from "./TransactionCard";
 import { useLocation } from "react-router-dom";
+import { ReactComponent as PrinterIcon } from "../../assets/svgs/printer.svg"
 
 const TransactionHistoryPage = () => {
   const { state } = useLocation();
@@ -46,8 +47,7 @@ const TransactionHistoryPage = () => {
   const totalTransactions = transactionData.length;
 
   return (
-    <div style={{ width: '80%', height: '80%' }}>
-    <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full">
+    <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full overflow-y-auto max-h-screen h-screen">
       {/* Main Content */}
       <div className="flex-1 bg-gray-100 p-6">
         <Header pageName="Transaction History" description="View your transaction history" className="mb-4" />
@@ -55,17 +55,19 @@ const TransactionHistoryPage = () => {
         {/* Totals */}
         <div className="flex flex-row justify-between space-x-4 mt-6">
           {/* Total A4 Papers */}
-          <div className="flex flex-row items-center bg-white p-4 rounded-md shadow-xl w-2/5">
-            <div className="flex flex-col items-end flex-grow">
+          <div className="flex flex-row items-center justify-between bg-white p-4 rounded-md shadow-xl w-2/5">
+            <PrinterIcon fill="#808080" className="w-16 h-16"/>
+            <div className="flex flex-col items-end">
               <div className="text-blue font-bold text-xl mb-3">Number of A4</div>
               <div className="text-gray-600 text-2xl font-bold">{totalA4Papers}</div>
             </div>
           </div>
           {/* Total Transactions */}
-          <div className="flex flex-row items-center bg-white p-4 rounded-md shadow-xl w-2/5">
-            <div className="flex flex-col items-end flex-grow">
+          <div className="flex flex-row justify-between items-center bg-white p-4 rounded-md shadow-xl w-2/5">
+            <PrinterIcon fill="#808080" className="w-16 h-16"/>
+            <div className="flex flex-col items-end">
               <div className="text-blue font-bold text-xl mb-3">Number of transactions</div>
-              <div className="text-gray-600 text-2xl font-bold">{totalTransactions}</div>
+              <div className="text-gray-dark text-2xl font-bold">{totalTransactions}</div>
             </div>
           </div>
         </div>
@@ -75,7 +77,7 @@ const TransactionHistoryPage = () => {
           <h3 className="text-2xl text-blue font-bold mb-3">History list</h3>
           <div className="space-y-3 max-h-[520px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400">
             {transactionData.length === 0 ? (
-              <p className="text-gray-600">No transactions found</p>
+              <p className="text-gray-dark">No transactions found</p>
             ) : (
               transactionData.map((transaction) => (
                 <div key={transaction.transactionId} className="flex flex-row justify-between">
@@ -93,7 +95,6 @@ const TransactionHistoryPage = () => {
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Header from "../../components/Header";
 import { ReactComponent as UploadSvg } from "../../assets/svgs/upload.svg"
 import { formatDateTime } from "../../utils/functions"
@@ -8,13 +8,17 @@ import ConfirmModal from "./modal";
 import { sampleWaitingFiles, samplePrintedFiles, sampleAllowedFormats } from "./hardcode_data";
 import { useNavigate } from "react-router-dom";
 
+import * as pdfjsLib from "pdfjs-dist";
+pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+
 const PrintDocumentPage = () => {
   const fileInputRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
   const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
-  const [waitingFiles, setWaitingFiles] = useState(sampleWaitingFiles);
+  const [waitingFiles, setWaitingFiles] = useState([]);
   const [currentWaitingFile, setCurrentWaitingFile] = useState(null);
   const navigate = useNavigate();
+  const [printingHistory, setPrintingHistory] = useState([]);
   
   const handleOpenFile = () => {
     fileInputRef.current.click();
@@ -36,8 +40,21 @@ const PrintDocumentPage = () => {
 
     if (isAllowedFormat(file.name)) {
       try {
-        navigate("printing_mode", {state: { file: file }})
-        // console.log(file)
+        const reader = new FileReader();
+
+        reader.onload = async (e) => {
+          const arrayBuffer = e.target.result;
+  
+          // Load the PDF document
+          const pdfDocument = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          
+          const numPages = pdfDocument.numPages;
+          console.log(`Number of pages: ${numPages}`);
+  
+          navigate("printing_mode", { state: { file: file, numPages: numPages } });
+        };
+  
+        reader.readAsArrayBuffer(file);
       } catch (err) {
         console.error(err);
       }
@@ -56,11 +73,35 @@ const PrintDocumentPage = () => {
 
   const onConfirmFileClick = () => {
     if (currentWaitingFile != null) {
+      let file = {
+        page: currentWaitingFile.page,
+        place: currentWaitingFile.place,
+        copies: currentWaitingFile.copies,
+        date: new Date("11-12-2024"),
+        fileName: currentWaitingFile.fileName,
+        lastModified: new Date(),
+      };
+
       let new_waiting_list = waitingFiles.filter((file) => file !== currentWaitingFile);
+      let new_printing_history = [file, ...printingHistory];
+
+      localStorage.setItem("waiting_sessions", JSON.stringify(new_waiting_list));
+      localStorage.setItem("printing_history", JSON.stringify(new_printing_history));
       setWaitingFiles(new_waiting_list);
+      setPrintingHistory(new_printing_history);
     }
     closeModal();
   }
+
+  useEffect(() => {
+    const waitingSessions = JSON.parse(localStorage.getItem("waiting_sessions")) || sampleWaitingFiles;
+    const printingHistoryData = JSON.parse(localStorage.getItem("printing_history")) || samplePrintedFiles;
+
+    console.log(waitingSessions)
+  
+    setWaitingFiles(waitingSessions);
+    setPrintingHistory(printingHistoryData);
+  }, [])
 
 
   return (
@@ -87,11 +128,11 @@ const PrintDocumentPage = () => {
           <div className="bg-white p-6 rounded-lg shadow-md h-full">
             <h2 className="text-blue font-bold text-xl">Printing history</h2>
             <div className="flex flex-col gap-2 max-h-[40vh] h-[40vh] overflow-y-scroll">
-              {samplePrintedFiles.map((print_log) => (
+              {printingHistory.map((print_log) => (
                 <button onClick={() => handleFileChosen(print_log.file)}>
                   <PrintingHistoryItem 
                     printTime={formatDateTime(print_log.date)}
-                    docName={print_log.file.name}
+                    docName={print_log.fileName}
                     page={print_log.page} place={print_log.place} copies={print_log.copies}
                   />
                 </button>
@@ -107,7 +148,7 @@ const PrintDocumentPage = () => {
               <div>
                 <WaitingItem
                 registerTime={formatDateTime(waiting_file.uploaded_date)}
-                docName={waiting_file.file.name}
+                docName={waiting_file.fileName}
                 page={waiting_file.page}
                 place={waiting_file.place}
                 copies={waiting_file.copies}

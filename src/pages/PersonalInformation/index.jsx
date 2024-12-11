@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../../components/Header";
 import { ReactComponent as AvtSvg } from "../../assets/svgs/Avatar.svg";
 import { ReactComponent as PrinterSvg } from "../../assets/svgs/printer.svg";
 import { ReactComponent as BookSvg } from "../../assets/svgs/book.svg";
 import PrintingHistoryItem from "../../components/PrintingHistoryItem";
+import { formatDateTime } from "../../utils/functions";
 
 const PersonalInformationPage = () => {
   const name = "Tran Quoc Trung";
@@ -12,8 +13,9 @@ const PersonalInformationPage = () => {
   const falculty = "Computer Science";
   const numberOfA4 = 32;
   const numberOfPrinted = 16;
-
   const AvatarImage = AvtSvg;
+
+  const [printingHistory, setPrintingHistory] = useState(() => JSON.parse(localStorage.getItem("printing_history")));
 
   return (
     <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full h-full">
@@ -64,24 +66,10 @@ const PersonalInformationPage = () => {
 
         <div className="flex flex-col space-y-6 items-start h-[740px] flex-nowrap overflow-y-scroll w-[58%] p-4 bg-white rounded-lg drop-shadow">
           <p className="text-2xl font-bold text-blue">Printing History</p>
-          <PrintingHistoryItem printTime="20:16PM 13/10/2024" docName="Capstone_Project_Autumn_2023.pdf"
-                                page="5" place="B4-01" copies="5" />
-          <PrintingHistoryItem printTime="20:16PM 13/10/2024" docName="Capstone_Project_Autumn_2023.pdf"
-                                page="5" place="B4-01" copies="5" />
-          <PrintingHistoryItem printTime="20:16PM 13/10/2024" docName="Capstone_Project_Autumn_2023.pdf"
-                                page="5" place="B4-01" copies="5" />
-          <PrintingHistoryItem printTime="20:16PM 13/10/2024" docName="Capstone_Project_Autumn_2023.pdf"
-                                page="5" place="B4-01" copies="5" />
-          <PrintingHistoryItem printTime="20:16PM 13/10/2024" docName="Capstone_Project_Autumn_2023.pdf"
-                                page="5" place="B4-01" copies="5" />
-          <PrintingHistoryItem printTime="20:16PM 13/10/2024" docName="Capstone_Project_Autumn_2023.pdf"
-                                page="5" place="B4-01" copies="5" />
-              
-          <PrintingHistoryItem printTime="20:16PM 13/10/2024" docName="Capstone_Project_Autumn_2023.pdf"
-                                page="5" place="B4-01" copies="5" />
-          <PrintingHistoryItem printTime="20:16PM 13/10/2024" docName="Capstone_Project_Autumn_2023.pdf"
-                                page="5" place="B4-01" copies="5" />
-                                    
+          {printingHistory.map((file) => (
+            <PrintingHistoryItem printTime={formatDateTime(file.date)} docName={file.fileName}
+                                  page={file.page} place={file.place} copies={file.copies} />
+          ))}                                 
               
         </div>
       </div>

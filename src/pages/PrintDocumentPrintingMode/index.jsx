@@ -24,7 +24,10 @@ const PrintPagePrintingMode = () => {
   const [selectedCopies, setSelectedCopies] = useState(1);
   const [selectedBuilding, setSelectedBuilding] = useState("All");
   const [printerList, setPrinterList] = useState([]);
-  const [selectedPrinter, setSelectedPrinter] = useState("");
+  const [selectedPrinter, setSelectedPrinter] = useState("B1-01");
+  const [numberOfPage, setNumberOfPage] = useState(null);
+  const [neededA4, setNeededA4] = useState(null);
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -44,19 +47,38 @@ const PrintPagePrintingMode = () => {
     if (!file && location.state?.file) {
       setLoadingPDF(true);
 
-      const { file: newFile } = location.state || null;
+      setNumberOfPage(6)
+      const { file: newFile, numPages: numPages } = location.state || null;
+
+      setNumberOfPage(numPages);
+      setSelectedPageRange([1, numPages]);
+      setNeededA4(numPages);
       setFile(newFile);
       setLoadingPDF(false)
     }
   }, [])
 
+  useEffect(() => {
+    setNeededA4(selectedCopies * numberOfPage);
+  }, [selectedCopies])
+
   const handlePrint = () => {
-    console.log("Printing with settings:", {
-      pageRange: selectedPageRange,
-      pageSize: selectedPageSize,
+    const printedFile = {
+      page: numberOfPage,
+      place: selectedPrinter,
       copies: selectedCopies,
-      printer: selectedPrinter,
-    });
+      uploaded_date: new Date("11-12-2024"),
+      is_printed: true,
+      waiting_minutes: null,
+      printed_time: new Date(),
+      fileName: file.name,
+      lastModified: new Date(),
+    }
+
+    const prevData = JSON.parse(localStorage.getItem("waiting_sessions"));
+    localStorage.setItem("waiting_sessions", JSON.stringify([printedFile, ...prevData]));
+
+    navigate("/user/print_document");
   };
 
   if (isLoadingPDF) {
@@ -101,7 +123,7 @@ const PrintPagePrintingMode = () => {
               <div className="bg-gray h-[1px] w-full"/>
             </div>
             <div className="flex flex-col space-y-[6px]">
-              <p className="font-bold text-black text-base"><span>Number of Pages:</span> <span className="font-normal text-gray-dark text-base">6</span></p>
+              <p className="font-bold text-black text-base"><span>Number of Pages:</span> <span className="font-normal text-gray-dark text-base">{numberOfPage}</span></p>
               <div className="bg-gray h-[1px] w-full"/>
             </div>
           </div>
@@ -235,7 +257,7 @@ const PrintPagePrintingMode = () => {
 
             {/* Print Action */}
             <div className="flex justify-between items-center">
-              <p className="text-sm text-red-500">Number of needed A4: 4</p>
+              <p className="text-sm text-red-500">Number of needed A4: {neededA4}</p>
               <button
                 className="px-6 py-2 bg-blue text-white rounded-md shadow-md"
                 onClick={handlePrint}

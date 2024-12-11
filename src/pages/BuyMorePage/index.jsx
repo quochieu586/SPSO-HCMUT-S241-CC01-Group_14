@@ -39,8 +39,7 @@ const handleQuantityChange = (event) => {
   };
   
   return (
-    <div style={{ width: '80%', height: '80%' }}>
-    <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full">
+    <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full overflow-y-auto max-h-screen h-screen">
       <Header pageName="Buy More Page" description="Buy and pay for pages." />
       <main className="flex flex-col justify-center items-start px-36 py-16 w-full bg-white rounded-3xl max-md:px-5 max-md:max-w-full">
         <section className="flex flex-col w-full max-w-[1030px] max-md:max-w-full">
@@ -77,7 +76,6 @@ const handleQuantityChange = (event) => {
           <PaymentButton onClick={handleSendOption} />
         </section>
       </main>
-    </div>
     </div>
   );
 };
