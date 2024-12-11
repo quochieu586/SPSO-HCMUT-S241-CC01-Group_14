@@ -21,7 +21,7 @@ const DocumentPreview = ({ document }) => {
 		})();
 
 		return () => PSPDFKit && PSPDFKit.unload(container);
-	}, [document]);
+	}, []);
 
 	return (
 		<div
