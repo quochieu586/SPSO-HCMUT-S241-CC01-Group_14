@@ -28,7 +28,9 @@ const PrintPagePrintingMode = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { file } = location.state || null;
+  // const { file } = location.state || null;
+  const [file, setFile] = useState(null);
+  const [isLoadingPDF, setLoadingPDF] = useState(true);
 
   useEffect(() => {
     if (selectedBuilding === "All") {
@@ -37,7 +39,16 @@ const PrintPagePrintingMode = () => {
       setPrinterList(filterPrinterList.filter((x) => x.split("-")[0] === selectedBuilding))
     }
   }, [selectedBuilding])
-  
+
+  useEffect(() => {
+    if (!file && location.state?.file) {
+      setLoadingPDF(true);
+
+      const { file: newFile } = location.state || null;
+      setFile(newFile);
+      setLoadingPDF(false)
+    }
+  }, [])
 
   const handlePrint = () => {
     console.log("Printing with settings:", {
@@ -47,6 +58,14 @@ const PrintPagePrintingMode = () => {
       printer: selectedPrinter,
     });
   };
+
+  if (isLoadingPDF) {
+    return (
+      <div className="w-full h-screen flex justify-center items-center">
+        <p className="text-3xl font-extrabold text-blue">Loading...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full overflow-y-auto h-screen max-h-screen ">
