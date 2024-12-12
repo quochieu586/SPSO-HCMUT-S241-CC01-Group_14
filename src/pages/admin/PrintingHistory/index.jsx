@@ -62,29 +62,30 @@ const PrintingHistoryPage = () => {
     setFilterStudentId(event.target.value);
   }
 
-  // Get printed Docs
   const getPrintedDocs = useCallback(async () => {
     setLoadingPrintedDocs(true)
 
-    // const fetchData = {
-    //   printer: filterMode === "By printer" ? filterArea : null,
-    //   area: filterMode === "By area" ? filterMode : null,
-    //   studentId: filterStudentId
-    // }
-    // AdminService.getPrintingHistory(fetchData)
-    // .then((res) => {
-    //   const data = res.data.payload
-    //   setPrintedDocs(data.printHistory)
-    //   // Continue
-    // })
-    setPrintedDocs(hard_code_admin_printing_history)
+    const fetchData = {
+      printer: filterMode === "By printer" ? filterArea : null,
+      area: filterMode === "By area" ? filterMode : null,
+      studentId: filterStudentId
+    }
 
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    await sleep(2000)
+    AdminService.getPrintingHistory(fetchData)
+    .then((res) => {
+      console.log(res)
 
-    setLoadingPrintedDocs(false)
+      const data = res.data;
+      setPrintedDocs(data);
+      // Continue
+    }).catch((err) => {
+      setPrintedDocs(hard_code_admin_printing_history);
+    }).finally(() => {
+      setLoadingPrintedDocs(false);
+    })
   }, [])
 
+  // Get printed Docs
   useEffect(() => {
     getPrintedDocs();
   }, [filterMode, filterArea, filterPrinter, getPrintedDocs])
