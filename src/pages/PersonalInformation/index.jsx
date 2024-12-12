@@ -22,7 +22,10 @@ const PersonalInformationPage = () => {
         // Fetch data here
         await UserService.getPersonalInformation()
         .then((res) => {
-          const fetchPersonalInfo = res.data.payload;
+          const fetchPersonalInfo = res.data;
+
+          console.log(res)
+
           setPersonalInfo(fetchPersonalInfo);
         }).catch((err) => {
           console.error(err);
@@ -31,7 +34,7 @@ const PersonalInformationPage = () => {
 
         await UserService.getPrintingHistory()
         .then((res) => {
-          const fetchPrintingHistory = res.data.payload;
+          const fetchPrintingHistory = res.data;
           setPrintingHistory(fetchPrintingHistory)
         }).catch((err) => {
           console.error(err);
@@ -111,8 +114,8 @@ const PersonalInformationPage = () => {
           <p className="text-2xl font-bold text-blue">Printing History</p>
           {printingHistory.map((item) => {
             return (
-              <PrintingHistoryItem printTime={item.time} docName={item.file_name} page={item.pages.toString()} 
-                                  place={item.printer} copies={item.copy.toString()}/>
+              <PrintingHistoryItem printTime={item.time} docName={item.fileName} page={item.pages} 
+                                  place={item.printer} copies={item.copy}/>
             )})} 
         </div>
       </div>

@@ -108,7 +108,7 @@ const MaintenanceSchedulePage = () => {
               value={newPlan.title}
               onChange={(e) => setNewPlan({ ...newPlan, title: e.target.value })}
               className="w-3/4 px-2 py-1 border border-gray-300 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Nhập tiêu đề..."
+              placeholder="Enter tilte..."
             />
           </div>
 

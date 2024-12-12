@@ -25,6 +25,7 @@ const AdminPersonalInformationPage = () => {
     AdminService.getPersonalInformation(studentId)
     .then((res) => {
       const fetchPersonalInfo = res.data.payload;
+
       setPersonalInfo(fetchPersonalInfo);
     }).catch((error) => {
       console.log(error)
