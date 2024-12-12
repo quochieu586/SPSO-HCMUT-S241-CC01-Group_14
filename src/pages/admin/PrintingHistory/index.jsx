@@ -62,14 +62,16 @@ const PrintingHistoryPage = () => {
     setFilterStudentId(event.target.value);
   }
 
-  const getPrintedDocs = useCallback(async () => {
+  const getPrintedDocs = async () => {
     setLoadingPrintedDocs(true)
 
-    const fetchData = {
-      printer: filterMode === "By printer" ? filterArea : null,
-      area: filterMode === "By area" ? filterMode : null,
+    let fetchData = {
+      printer: filterMode === "By printer" ? filterPrinter : null,
+      area: filterMode === "By area" ? filterArea : null,
       studentId: filterStudentId
     }
+
+    console.log(fetchData)
 
     AdminService.getPrintingHistory(fetchData)
     .then((res) => {
@@ -83,12 +85,12 @@ const PrintingHistoryPage = () => {
     }).finally(() => {
       setLoadingPrintedDocs(false);
     })
-  }, [])
+  }
 
   // Get printed Docs
   useEffect(() => {
     getPrintedDocs();
-  }, [filterMode, filterArea, filterPrinter, getPrintedDocs])
+  }, [filterMode, filterArea, filterPrinter])
 
   return (
     <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full">
