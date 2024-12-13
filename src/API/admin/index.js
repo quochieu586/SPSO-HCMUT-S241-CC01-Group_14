@@ -28,8 +28,10 @@ const getListOfFileTypes = () => {
     return adminAPI.get(query)
 }
 
-const getMaintenanceList = (ended) => {
+const getMaintenanceList = (ended = false) => {
     const query = `/get_maintenances?ended=${ended}`
+
+    return adminAPI.get(query)
 }
 
 // POST APIs
@@ -39,7 +41,7 @@ const togglePrinterStatus = (printerId) => {
         printerId: printerId
     }
 
-    return adminAPI.get(query, payload)
+    return adminAPI.post(query, payload)
 }
 
 const addFileType = (fileType) => {
@@ -48,16 +50,22 @@ const addFileType = (fileType) => {
         fileType: fileType
     }
 
-    return adminAPI.get(query, payload)
+    return adminAPI.post(query, payload)
 }
 
-const addMaintenanceSchedule = (fileType) => {
-    const query = "/add_file_fype"
+const addMaintenanceSchedule = ( title, description, startTime, createdBy, duration ) => {
+    const query = "/add_maintenance"
     const payload = {
-        fileType: fileType
+        title: title,
+        description: description,
+        startTime: startTime,
+        createdBy: createdBy,
+        duration: duration,
     }
 
-    return adminAPI.get(query, payload)
+    console.log(payload);
+
+    return adminAPI.post(query, payload);
 }
 
 // DELETE
@@ -67,7 +75,7 @@ const removeFileType = (fileType) => {
         fileType: fileType
     }
 
-    return adminAPI.get(query, payload)
+    return adminAPI.delete(query, payload)
 }
 
 const AdminService = {

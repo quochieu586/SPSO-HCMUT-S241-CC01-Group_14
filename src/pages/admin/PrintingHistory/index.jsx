@@ -9,7 +9,7 @@ import { ReactComponent as CopySvg } from "../../../assets/svgs/copy.svg";
 
 import AdminPrintingHistoryItem from "../../../components/AdminPrintingHistoryItem";
 import AdminService from "../../../API/admin";
-import { hard_code_admin_printing_history } from "../../../hardData";
+import { sampleAdminPrintedFiles } from "../../../hardData";
 
 const filterModeList = ["By area", "By printer", "All"];
 const filterAreaList = ["B1", "A4", "B4", "C4", "C6", "B10"];
@@ -81,7 +81,7 @@ const PrintingHistoryPage = () => {
       setPrintedDocs(data);
       // Continue
     }).catch((err) => {
-      setPrintedDocs(hard_code_admin_printing_history);
+      setPrintedDocs(sampleAdminPrintedFiles);
     }).finally(() => {
       setLoadingPrintedDocs(false);
     })

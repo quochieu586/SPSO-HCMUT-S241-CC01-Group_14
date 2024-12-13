@@ -3,52 +3,72 @@ import Header from "../../components/Header";
 import "./fonts.css";
 import TransactionCard from "./TransactionCard";
 import { useLocation } from "react-router-dom";
-import { ReactComponent as PrinterIcon } from "../../assets/svgs/printer.svg"
+import { ReactComponent as PrinterIcon } from "../../assets/svgs/printer.svg";
+import UserService from "../../API/user";
+import { defaultPersonalData, sampleTransactionData } from "../../hardData";
 
 const TransactionHistoryPage = () => {
-  const { state } = useLocation();
-  const { selectedOption } = state || {};
-
   // Initialize state from local storage or as an empty array
-  const [transactionData, setTransactionData] = useState(() => {
-    const savedTransactions = localStorage.getItem("transactionData");
-    return savedTransactions ? JSON.parse(savedTransactions) : [];
-  });
+  const [transactionData, setTransactionData] = useState([]);
+  const [totalA4Papers, setTotalA4Papers] = useState(0);
 
-  const isInitialMount = useRef(true);
+  // const { state } = useLocation();
+  // const { selectedOption } = state || {};
+  // const isInitialMount = useRef(true);
 
+  // useEffect(() => {
+  //   if (isInitialMount.current) {
+  //     isInitialMount.current = false;
+  //     return;
+  //   }
+
+  //   if (selectedOption && selectedOption.quantity && selectedOption.price) {
+  //     const newTransaction = {
+  //       transactionId: Date.now(),
+  //       time: new Date().toLocaleTimeString(),
+  //       date: new Date().toLocaleDateString(),
+  //       amount: Number(selectedOption.price).toLocaleString(), // Format amount
+  //       currency: "VND",
+  //       number: selectedOption.quantity,
+  //       transactionType: `Buying Papers (${selectedOption.quantity} papers)`,
+  //     };
+
+  //     setTransactionData((prevData) => {
+  //       const updatedData = [newTransaction, ...prevData];
+  //       localStorage.setItem("transactionData", JSON.stringify(updatedData)); // Save to local storage
+  //       return updatedData;
+  //     });
+  //   }
+  // }, [selectedOption]);
+
+  /*    USE EFFECT    */
   useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
+    const loadData = async () => {
+      await UserService.getTransactionHistory()
+      .then((res) => {
+        console.log(res.data);
+        setTransactionData(res.data);
+      }).catch((err) => {
+        console.error(err);
+        setTransactionData(sampleTransactionData);
+      })
+
+      await UserService.getPersonalInformation()
+      .then((res) => {
+        setTotalA4Papers(res.data.numberOfA4);
+      }).catch((err) => {
+        setTotalA4Papers(defaultPersonalData.numberOfA4);
+      })
     }
 
-    if (selectedOption && selectedOption.quantity && selectedOption.price) {
-      const newTransaction = {
-        transactionId: Date.now(),
-        time: new Date().toLocaleTimeString(),
-        date: new Date().toLocaleDateString(),
-        amount: Number(selectedOption.price).toLocaleString(), // Format amount
-        currency: "VND",
-        number: selectedOption.quantity,
-        transactionType: `Buying Papers (${selectedOption.quantity} papers)`,
-      };
-
-      setTransactionData((prevData) => {
-        const updatedData = [newTransaction, ...prevData];
-        localStorage.setItem("transactionData", JSON.stringify(updatedData)); // Save to local storage
-        return updatedData;
-      });
-    }
-  }, [selectedOption]);
+    loadData();
+  }, [])
 
   // Calculate totals
-  const totalA4Papers = transactionData.reduce((total, transaction) => total + transaction.number, 0);
   const totalTransactions = transactionData.length;
 
   return (
-    <div style={{ width: '80%', height: '80%' }}>
-    <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full">
+    <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full overflow-y-auto max-h-screen h-screen">
       {/* Main Content */}
       <div className="flex-1 bg-gray-100 p-6">
         <Header pageName="Transaction History" description="View your transaction history" className="mb-4" />
@@ -68,7 +88,7 @@ const TransactionHistoryPage = () => {
             <PrinterIcon className="w-16 h-16" fill="#808080"/>
             <div className="flex flex-col items-end">
               <div className="text-blue font-bold text-xl mb-3">Number of transactions</div>
-              <div className="text-gray-600 text-2xl font-bold">{totalTransactions}</div>
+              <div className="text-gray-dark text-2xl font-bold">{totalTransactions}</div>
             </div>
           </div>
         </div>
@@ -78,17 +98,16 @@ const TransactionHistoryPage = () => {
           <h3 className="text-2xl text-blue font-bold mb-3">History list</h3>
           <div className="space-y-3 max-h-[520px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400">
             {transactionData.length === 0 ? (
-              <p className="text-gray-600">No transactions found</p>
+              <p className="text-gray-dark">No transactions found</p>
             ) : (
               transactionData.map((transaction) => (
-                <div key={transaction.transactionId} className="flex flex-row justify-between">
+                <div key={transaction.transaction_id} className="flex flex-row justify-between">
                   <TransactionCard
-                    key={transaction.transactionId}
-                    date={transaction.date}
+                    key={transaction.transaction_id}
                     time={transaction.time}
-                    description={transaction.transactionType}
-                    amount={transaction.amount}
-                    transactionId={transaction.transactionId}
+                    description={transaction.title}
+                    amount={transaction.payment}
+                    transactionId={transaction.transaction_id}
                   />
                 </div>
               ))
@@ -96,7 +115,6 @@ const TransactionHistoryPage = () => {
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };

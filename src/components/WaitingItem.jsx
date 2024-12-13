@@ -2,9 +2,15 @@ import { ReactComponent as BookSvg } from "../assets/svgs/book.svg";
 import { ReactComponent as PrinterSvg } from "../assets/svgs/printer.svg";
 import { ReactComponent as CopySvg } from "../assets/svgs/copy.svg";
 import { ReactComponent as HistorySvg} from "../assets/svgs/history.svg"
+import { useEffect } from "react";
 
 const WaitingItem = ({ registerTime, docName, page, place, copies, isPrinted, 
         waitingTime, printedTime, onButtonClick }) => {
+
+    useEffect(() => {
+        console.log(waitingTime);
+    }, [])
+
     return (
         <div className="flex flex-col w-full space-y-2 items-start p-3 rounded-lg drop-shadow bg-white">
             <p className="font-normal text-gray-dark text-sm">{registerTime}</p>
@@ -23,7 +29,7 @@ const WaitingItem = ({ registerTime, docName, page, place, copies, isPrinted,
                     <p>{copies} copies</p>
                 </div>
             </div>
-            {isPrinted ?
+            {isPrinted === "COMPLETE" ?
                 <div className="w-full">
                     <div className="flex flex-row gap-1">
                         <HistorySvg fill="#07C656" />

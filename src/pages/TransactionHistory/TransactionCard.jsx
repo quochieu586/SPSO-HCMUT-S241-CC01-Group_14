@@ -1,13 +1,13 @@
 import * as React from "react";
 import PropTypes from 'prop-types';
 
-function TransactionCard({ date, time, description, amount, transactionId }) {
+function TransactionCard({ time, description, amount, transactionId }) {
   return (
     <article className="flex flex-col items-start py-4 pr-16 pl-7 w-full bg-white rounded-lg shadow-[0px_4px_4px_rgba(0,0,0,0.25)] max-md:px-5 max-md:max-w-full">
       <section className="flex flex-wrap gap-5 justify-between items-start self-stretch max-md:max-w-full">
         <div className="flex flex-col self-start">
           <time className="self-start text-sm text-zinc-500">
-            {time} {date}
+            {time}
           </time>
           <div className="flex items-center mt-3">
             <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 51 35" fill="none">
@@ -19,7 +19,7 @@ function TransactionCard({ date, time, description, amount, transactionId }) {
           </div>
         </div>
         <p className="self-end mt-3 text-xl font-bold text-right text-gray-800 max-md:mt-10">
-          {amount.toLocaleString()} VND
+          {amount}
         </p>
       </section>
       <section className="mt-2 ml-12 max-md:ml-2.5">

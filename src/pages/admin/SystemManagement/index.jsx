@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../../components/Header";
 import { ReactComponent as PrinterIcon } from "../../../assets/svgs/printer.svg"
 import AdminService from "../../../API/admin";
@@ -119,6 +119,19 @@ const SystemManagementPage = () => {
         setLoadingPrinters(false)
       })
   };
+
+  useEffect(() => {
+    const getData = async () => {
+      await AdminService.getPrinters()
+      .then((res) => {
+        console.log(res);
+      }).catch((err) => {
+        console.log(err);
+      })
+    }
+
+    getData();
+  }, [])
 
   return (
     <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full">

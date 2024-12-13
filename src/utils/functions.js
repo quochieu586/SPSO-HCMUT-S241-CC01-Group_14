@@ -57,3 +57,22 @@ export function formatHour(date_str) {
 
     return `${timeString} ${dateString}`;
 }
+
+export function deltaTime(t1, t2) {
+    function parseCustomDateTime(dateTimeStr) {
+        const regex = /^(\d{2}:\d{2})(AM|PM)\s(.+)$/;
+        const [, time, meridian, date] = dateTimeStr.match(regex);
+        const [hours, minutes] = time.split(':').map(Number);
+
+        // Convert 12-hour clock to 24-hour clock
+        const adjustedHours = meridian === "PM" && hours !== 12 ? hours + 12 : hours === 12 && meridian === "AM" ? 0 : hours;
+      
+        // Combine parsed values into a Date object
+        return new Date(`${date} ${adjustedHours}:${minutes}:00`);
+    }
+
+    const date1 = parseCustomDateTime(t1);
+    const date2 = parseCustomDateTime(t2);
+
+    return (date2 - date1) / (1000 * 60);
+}

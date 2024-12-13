@@ -14,7 +14,7 @@ const getPrintingHistory = async () => {
 } 
 
 const getWaitingSession = async () => {
-    const query = "/waiting_session"
+    const query = "/waiting_sessions"
 
     return userAPI.get(query)
 }
@@ -26,13 +26,13 @@ const getTransactionHistory = () => {
 }
 
 const getAvailablePrinters = () => {
-    const query = "/available_printers"
+    const query = "/get_available_printers"
 
     return userAPI.get(query)
 }
 
 // POST APIs
-const printFile = (fileName, pages, printer, copy) => {
+const printFile = ({fileName, pages, printer, copy}) => {
     const query = "/print_document"
     const payload = {
         fileName: fileName,
@@ -41,7 +41,9 @@ const printFile = (fileName, pages, printer, copy) => {
         copy: copy,
     }
 
-    return userAPI.get(query, payload)
+    console.log(payload);
+
+    return userAPI.post(query, payload)
 }
 
 const confirmPrinting = (session_id) => {
@@ -50,16 +52,19 @@ const confirmPrinting = (session_id) => {
         session_id: session_id,
     }
 
-    return userAPI.get(query, payload)
+    return userAPI.post(query, payload)
 }
 
-const createTransaction = (numberOfPages) => {
-    const query = "/available_printers"
+const createTransaction = (quantity, price) => {
+    const query = "/create_transaction"
     const payload = {
-        numberOfPages: numberOfPages,
+        quantity: quantity,
+        price: price,
     }
 
-    return userAPI.get(query, payload)
+    console.log(payload);
+
+    return userAPI.post(query, payload);
 }
 
 // DELETE 
@@ -69,7 +74,7 @@ const cancelPrintingSession = (session_id) => {
         session_id: session_id
     }
 
-    return userAPI.get(query, payload)
+    return userAPI.delete(query, payload)
 }
 
 const UserService = {

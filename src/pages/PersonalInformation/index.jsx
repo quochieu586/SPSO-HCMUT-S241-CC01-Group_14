@@ -4,7 +4,7 @@ import { ReactComponent as AvtSvg } from "../../assets/svgs/Avatar.svg";
 import { ReactComponent as PrinterSvg } from "../../assets/svgs/printer.svg";
 import { ReactComponent as BookSvg } from "../../assets/svgs/book.svg";
 import PrintingHistoryItem from "../../components/PrintingHistoryItem";
-import { hard_code_personal_data, hard_code_printing_history_item } from "../../hardData";
+import { defaultPersonalData, samplePrintedFiles } from "../../hardData";
 import UserService from "../../API/user";
 
 const PersonalInformationPage = () => {
@@ -12,7 +12,6 @@ const PersonalInformationPage = () => {
   const [personalInfo, setPersonalInfo] = useState(null)
   const [printingHistory, setPrintingHistory] = useState([])
   const [studentId, setStudentId] = useState(null)
-  const [AvatarImage, setAvatarImage] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,7 +28,7 @@ const PersonalInformationPage = () => {
           setPersonalInfo(fetchPersonalInfo);
         }).catch((err) => {
           console.error(err);
-          setPersonalInfo(hard_code_personal_data);
+          setPersonalInfo(defaultPersonalData);
         })
 
         await UserService.getPrintingHistory()
@@ -38,12 +37,11 @@ const PersonalInformationPage = () => {
           setPrintingHistory(fetchPrintingHistory)
         }).catch((err) => {
           console.error(err);
-          setPrintingHistory(hard_code_printing_history_item);
+          setPrintingHistory(samplePrintedFiles);
         })
         
         const studentId = localStorage.getItem('studentId');
         setStudentId(studentId)
-        setAvatarImage(AvtSvg)
       } catch (error) {
         console.error("Error when loading page:", error)
       } finally {
@@ -70,7 +68,7 @@ const PersonalInformationPage = () => {
         <div className="flex flex-col space-y-8 w-[42%]">
           <div className="flex flex-col space-y-3 p-4 w-full items-center bg-white rounded-lg drop-shadow">
             <div className="flex flex-row space-x-3 w-full justify-start items-center">
-              <AvatarImage fill="#679F38" className="w-28 h-28"/>
+              <AvtSvg fill="#679F38" className="w-28 h-28"/>
               <p className="text-2xl font-bold text-blue">{personalInfo.name}</p>
             </div>
             <div className="flex flex-col w-full justify-start space-y-2">

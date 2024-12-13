@@ -4,27 +4,23 @@ import Header from "../../components/Header.jsx";
 import DocumentPreview from "./DocumentPreview.jsx";
 
 import { ReactComponent as CloseSvg } from "../../assets/svgs/close-circle.svg"
-import { set } from "date-fns";
-
-const filterPrinterList = [
-  "B1-01", "B1-02", "B1-03", "B1-04", "B1-05", 
-  "A4-01", "A4-02", "A4-03", 
-  "B4-01", "B4-02", 
-  "C4-01", "C4-02", 
-  "C6-01", "B10-01"
-];
-
-const areas = [...new Set(filterPrinterList.map(item => item.split("-")[0]))];
-areas.push("All")
+import UserService from "../../API/user/index.js";
+import { sampleFilterPrinterList } from "../../hardData/index.js";
 
 const PrintPagePrintingMode = () => {
   const [selectedPageRange, setSelectedPageRange] = useState([2, 5]);
   const [selectedPageSize, setSelectedPageSize] = useState("A4");
   const [ChooseSide, setChooseSide] = useState("1");
   const [selectedCopies, setSelectedCopies] = useState(1);
-  const [selectedBuilding, setSelectedBuilding] = useState("All");
+  const [selectedBuilding, setSelectedBuilding] = useState("");
   const [printerList, setPrinterList] = useState([]);
-  const [selectedPrinter, setSelectedPrinter] = useState("");
+  const [selectedPrinter, setSelectedPrinter] = useState("B1-01");
+  const [numberOfPage, setNumberOfPage] = useState(null);
+  const [neededA4, setNeededA4] = useState(null);
+
+  const [allFilterList, setAllFilterList] = useState([]);
+  const [areas, setAreas] = useState([]);
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -34,30 +30,70 @@ const PrintPagePrintingMode = () => {
 
   useEffect(() => {
     if (selectedBuilding === "All") {
-      setPrinterList(filterPrinterList)
+      setPrinterList(allFilterList)
     } else {
-      setPrinterList(filterPrinterList.filter((x) => x.split("-")[0] === selectedBuilding))
+      setPrinterList(allFilterList.filter((x) => x.split("-")[0] === selectedBuilding))
     }
   }, [selectedBuilding])
 
-  useEffect(() => {
-    if (!file && location.state?.file) {
-      setLoadingPDF(true);
-
-      const { file: newFile } = location.state || null;
-      setFile(newFile);
-      setLoadingPDF(false)
+  const handlePrint = async () => {
+    const printedFile = {
+      fileName: file.name,
+      pages: numberOfPage,
+      printer: selectedPrinter,
+      copy: selectedCopies,
     }
+
+    await UserService.printFile(printedFile)
+    .catch((err) => {
+      console.log(err)
+    }).finally(() => {
+      navigate("/user/print_document");
+    })
+  };
+
+  /*      USE EFFECT        */
+  useEffect(() => {
+    const getData = async () => {
+      UserService.getAvailablePrinters()
+      .then((res) => {
+        console.log(res.data);
+        setAllFilterList(res.data);
+
+        let listAreas = [...new Set(res.data.map(item => item.split("-")[0])), "All"];
+
+        setAreas(listAreas);
+      }).catch((err) => {
+        console.error(err);
+
+        setAllFilterList(sampleFilterPrinterList);
+        let listAreas = [...new Set(sampleFilterPrinterList.map(item => item.split("-")[0])), "All"];
+
+        setAreas(listAreas);
+      }).finally(() => {
+        if (!file && location.state?.file) {
+          setLoadingPDF(true);
+    
+          setNumberOfPage(6)
+          const { file: newFile, numPages: numPages } = location.state || null;
+    
+          setNumberOfPage(numPages);
+          setSelectedPageRange([1, numPages]);
+          setNeededA4(numPages);
+          setFile(newFile);
+          setLoadingPDF(false);
+
+          setSelectedBuilding("All");
+        }
+      })
+    }
+
+    getData();
   }, [])
 
-  const handlePrint = () => {
-    console.log("Printing with settings:", {
-      pageRange: selectedPageRange,
-      pageSize: selectedPageSize,
-      copies: selectedCopies,
-      printer: selectedPrinter,
-    });
-  };
+  useEffect(() => {
+    setNeededA4(selectedCopies * numberOfPage);
+  }, [selectedCopies])
 
   if (isLoadingPDF) {
     return (
@@ -101,7 +137,7 @@ const PrintPagePrintingMode = () => {
               <div className="bg-gray h-[1px] w-full"/>
             </div>
             <div className="flex flex-col space-y-[6px]">
-              <p className="font-bold text-black text-base"><span>Number of Pages:</span> <span className="font-normal text-gray-dark text-base">6</span></p>
+              <p className="font-bold text-black text-base"><span>Number of Pages:</span> <span className="font-normal text-gray-dark text-base">{numberOfPage}</span></p>
               <div className="bg-gray h-[1px] w-full"/>
             </div>
           </div>
@@ -224,7 +260,7 @@ const PrintPagePrintingMode = () => {
                 </select>
               </div>
               
-              <div className="grid grid-cols-4 gap-x-2 gap-y-2">
+              <div className="grid grid-cols-4 gap-x-2 gap-y-2 max-h-28 overflow-y-scroll">
                 {printerList.map((item) => 
                   <button className={`py-1 shadow-md rounded-lg flex items-center justify-center font-medium ${selectedPrinter === item ? "bg-blue-100 text-blue" : "bg-gray-100 text-gray-dark"}`} onClick={() => setSelectedPrinter(item)}>
                     {item}
@@ -235,7 +271,7 @@ const PrintPagePrintingMode = () => {
 
             {/* Print Action */}
             <div className="flex justify-between items-center">
-              <p className="text-sm text-red-500">Number of needed A4: 4</p>
+              <p className="text-sm text-red-500">Number of needed A4: {neededA4}</p>
               <button
                 className="px-6 py-2 bg-blue text-white rounded-md shadow-md"
                 onClick={handlePrint}

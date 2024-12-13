@@ -4,6 +4,7 @@ import PaperOption from "./PaperOption";
 import PaymentButton from "./PaymentButton";
 import PriceDisplay from "./PriceDisplay";
 import { useNavigate } from "react-router-dom";
+import UserService from "../../API/user";
 
 const BuyMorePage = () => {
   const navigate = useNavigate();
@@ -13,34 +14,40 @@ const BuyMorePage = () => {
     { quantity: 200, price: 40000 }
   ];
   // React code
-const [customQuantity, setCustomQuantity] = useState(0);
-const [customPrice, setCustomPrice] = useState(0);
-const [selectedOption, setSelectedOption] = useState({ quantity: 0, price: 0 });
+  const [customQuantity, setCustomQuantity] = useState(0);
+  const [customPrice, setCustomPrice] = useState(0);
+  const [selectedOption, setSelectedOption] = useState({ quantity: 0, price: 0 });
 
-const handleQuantityChange = (event) => {
-  const newQuantity = Number(event.target.value);
-  const newPrice = newQuantity*200;
-  setCustomQuantity(newQuantity);
-  setCustomPrice(newPrice);
+  const handleQuantityChange = (event) => {
+    const newQuantity = Number(event.target.value);
+    const newPrice = newQuantity*200;
+    setCustomQuantity(newQuantity);
+    setCustomPrice(newPrice);
 
-  const newOption = { quantity: newQuantity, price: newPrice };
-  setSelectedOption(newOption);
+    const newOption = { quantity: newQuantity, price: newPrice };
+    setSelectedOption(newOption);
 
-  // Call handleOptionSelect if needed
-  handleOptionSelect(newOption);
-};
+    // Call handleOptionSelect if needed
+    handleOptionSelect(newOption);
+  };
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
   };
-  const handleSendOption = () => {
+
+  const handleSendOption = async () => {
     if (selectedOption) {
-      navigate('../transaction_history', { state: { selectedOption } });
+      await UserService.createTransaction(selectedOption.quantity, selectedOption.price)
+      .then(() => {
+        navigate('../transaction_history');
+      })
+      .catch((err) => {
+        alert("Error when buying pages:" + err);
+      })
     }
   };
   
   return (
-    <div style={{ width: '80%', height: '80%' }}>
-    <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full">
+    <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full overflow-y-auto max-h-screen h-screen">
       <Header pageName="Buy More Page" description="Buy and pay for pages." />
       <main className="flex flex-col justify-center items-start px-36 py-16 w-full bg-white rounded-3xl max-md:px-5 max-md:max-w-full">
         <section className="flex flex-col w-full max-w-[1030px] max-md:max-w-full">
@@ -77,7 +84,6 @@ const handleQuantityChange = (event) => {
           <PaymentButton onClick={handleSendOption} />
         </section>
       </main>
-    </div>
     </div>
   );
 };

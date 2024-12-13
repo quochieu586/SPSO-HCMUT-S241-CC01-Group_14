@@ -1,36 +1,64 @@
 import React, { useState } from "react";
 import Header from "../../../components/Header";
 import { TrashIcon } from '@heroicons/react/outline'; // Biểu tượng thùng rác
-
-const hard_code_maintenances = [
-  { title: "Periodic maintenance", startDate: "20:00PM 12/11/2024", 
-    duration: "2", content: "Fix error", status: "Complete", createdBy: "Tran Quoc Hieu" },
-  { title: "Periodic maintenance", startDate: "20:00PM 12/11/2024", 
-    duration: "2", content: "Fix error", status: "Complete", createdBy: "Truong Tuan Anh" },
-  { title: "Periodic maintenance", startDate: "20:00PM 12/11/2024", 
-    duration: "2", content: "Fix error", status: "Not start", createdBy: "Tran Quoc Hieu" },
-]
+import { useEffect } from "react";
+import AdminService from "../../../API/admin";
+import { sampleMaintenancelans } from "../../../hardData";
 
 const MaintenanceSchedulePage = () => {
-  const [maintenancePlans, setMaintenancePlans] = useState(hard_code_maintenances);
+  const [maintenancePlans, setMaintenancePlans] = useState([]);
   const [newPlan, setNewPlan] = useState({
     title: "",
     startDate: "",
+    startHour: 0,
     duration: 0,
-    content: "",
+    description: "",
     createdBy: "Tran Quoc Trung",
   });
 
+  const handleStartHour = (e) => {
+    if (e.target.value >= 0 && e.target.value < 24) {
+      setNewPlan({...newPlan, startHour: e.target.value});
+    } else {
+      alert("Invalid input for hour");
+      setNewPlan({...newPlan, startHour: 0});
+    }
+  }
+
+  const handleDuration = (e) => {
+    if (e.target.value >= 0) {
+      setNewPlan({...newPlan, duration: e.target.value});
+    } else {
+      alert("Invalid input for hour");
+      setNewPlan({...newPlan, duration: 0});
+    }
+  }
+
   // Hàm xử lý thêm kế hoạch bảo trì vào đầu danh sách
-  const handleAddPlan = () => {
+  const handleAddPlan = async () => {
     if (
       newPlan.title.trim() !== "" &&
       newPlan.startDate.trim() !== "" &&
-      newPlan.duration.trim() !== "" &&
-      newPlan.content.trim() !== ""
+      newPlan.description.trim() !== ""
     ) {
-      setMaintenancePlans([newPlan, ...maintenancePlans]); // Thêm kế hoạch vào đầu danh sách
-      setNewPlan({ title: "", startDate: "", duration: "", content: "" }); // Reset ô nhập
+      let startTime;
+      if (newPlan.startHour <= 12) {
+        startTime = `${newPlan.startHour}:00AM ${newPlan.startDate}`
+      } else {
+        startTime = `${newPlan.startHour-12}:00PM ${newPlan.startDate}`
+      }
+
+      await AdminService.addMaintenanceSchedule(newPlan.title, newPlan.description, startTime, "Tran Quoc Trung", newPlan.duration)
+      .then(() => {
+        setMaintenancePlans([...maintenancePlans, newPlan]);
+      })
+      .catch((err) => {
+        alert("Can not add file due to error: " + err);
+      }).finally(() => {
+        setNewPlan({ title: "", startDate: "", startHour: 0, duration: 0, description: "" }); // Reset ô nhập
+      })
+    } else {
+      alert("Invalid input !")
     }
   };
 
@@ -40,6 +68,21 @@ const MaintenanceSchedulePage = () => {
     setMaintenancePlans(updatedPlans);
   };
 
+  useEffect(() => {
+    const loadData = async () => {
+      AdminService.getMaintenanceList()
+      .then((res) => {
+        console.log(res.data);
+        setMaintenancePlans(res.data);
+      }).catch((err) => {
+        console.error(err);
+        setMaintenancePlans(sampleMaintenancelans);
+      })
+    }
+
+    loadData()
+  }, [])
+
   return (
     <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full">
       {/* Header */}
@@ -48,8 +91,8 @@ const MaintenanceSchedulePage = () => {
       {/* Lịch bảo trì */}
       <div className="bg-white p-4 rounded-lg flex flex-col space-y-2 drop-shadow">
         <h2 className="text-2xl font-bold text-blue">Maintenance Schedule</h2>
-        {maintenancePlans.length === 0 ? (
-            <p className="text-gray-500">Chưa có kế hoạch bảo trì nào.</p>
+        {~maintenancePlans ? (
+            <p className="text-gray-500">There is no any maintenance schedule yet !</p>
           ) : (
           maintenancePlans.map((plan, index) => (
             <div
@@ -68,9 +111,9 @@ const MaintenanceSchedulePage = () => {
 
               {/* Thông tin "Bắt đầu từ" và "Thời gian bảo trì" */}
               <div className="flex justify-between text-xs">
-                <span className="font-bold text-sm text-black">Content</span>
+                <span className="font-bold text-sm text-black">Description</span>
                 <div className="flex flex-row">
-                  <span className="italic text-gray-400 inline w-32"> {plan.startDate}</span> {/* Đặt lớp tailwind vào đây */}
+                  <span className="italic text-gray-400 inline w-32"> {plan.startTime}</span> {/* Đặt lớp tailwind vào đây */}
                   <div className="flex flex-row space-x-2 justify-start w-44">
                     <span><strong>Created by:</strong></span> 
                     <span className="text-gray-400 inline">{plan.createdBy}</span>
@@ -89,7 +132,7 @@ const MaintenanceSchedulePage = () => {
 
               {/* Nội dung */}
               <div className="bg-gray-200 p-1 text-gray-700 text-sm">
-                {plan.content}
+                {plan.description}
               </div>
             </div>
           ))
@@ -124,11 +167,20 @@ const MaintenanceSchedulePage = () => {
               />
             </div>
             <div className="flex items-center space-x-3">
-              <label className="text-gray-700"><strong>Duration:</strong></label>
+              <label className="text-gray-700"><strong>Hour:</strong></label>
+              <input
+                type="number"
+                value={newPlan.startHour}
+                onChange={handleStartHour}
+                className="px-2 py-1 border border-gray-300 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="flex items-center space-x-3">
+              <label className="text-gray-700"><strong>Duration (hour):</strong></label>
               <input
                 type="number"
                 value={newPlan.duration}
-                onChange={(e) => setNewPlan({ ...newPlan, duration: e.target.value })}
+                onChange={handleDuration}
                 className="px-2 py-1 border border-gray-300 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -138,11 +190,11 @@ const MaintenanceSchedulePage = () => {
           <div className="flex items-start space-x-3">
             <label className="w-24 text-gray-700"><strong>Description:</strong></label>
             <textarea
-              value={newPlan.content}
-              onChange={(e) => setNewPlan({ ...newPlan, content: e.target.value })}
+              value={newPlan.description}
+              onChange={(e) => setNewPlan({ ...newPlan, description: e.target.value })}
               className="w-3/4 min-h-60 p-2 border border-gray-300 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows="4"
-              placeholder="Nhập nội dung..."
+              placeholder="Enter description..."
             />
           </div>
 
@@ -152,7 +204,7 @@ const MaintenanceSchedulePage = () => {
               onClick={handleAddPlan}
               className="px-6 py-1 bg-blue text-white rounded-md hover:bg-blue"
             >
-              Tạo
+              Create
             </button>
           </div>
         </div>

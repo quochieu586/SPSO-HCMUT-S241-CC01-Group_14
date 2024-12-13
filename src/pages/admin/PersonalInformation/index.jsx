@@ -8,7 +8,7 @@ import { ReactComponent as CloseSvg } from "../../../assets/svgs/close-circle.sv
 import PrintingHistoryItem from "../../../components/PrintingHistoryItem";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import AdminService from "../../../API/admin";
-import { hard_code_personal_data, hard_code_printing_history_item } from "../../../hardData";
+import { defaultPersonalData, samplePrintedFiles } from "../../../hardData";
 
 const AdminPersonalInformationPage = () => {
   const [searchParams] = useSearchParams();
@@ -19,28 +19,27 @@ const AdminPersonalInformationPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [personalInfo, setPersonalInfo] = useState(null)
   const [printingHistory, setPrintingHistory] = useState([])
-  const [AvatarImage, setAvatarImage] = useState(AvtSvg)
 
   const getPersonalInformation = async () => {
     AdminService.getPersonalInformation(studentId)
     .then((res) => {
-      const fetchPersonalInfo = res.data.payload;
+      const fetchPersonalInfo = res.data;
 
       setPersonalInfo(fetchPersonalInfo);
     }).catch((error) => {
       console.log(error)
-      setPersonalInfo(hard_code_personal_data)
+      setPersonalInfo(defaultPersonalData);
     })
   }
 
   const getPrintingHistory = async () => {
     AdminService.getPrintingHistory()
     .then((res) => {
-      const fetchPrintingHistory = res.data.payload;
+      const fetchPrintingHistory = res.data;
       setPrintingHistory(fetchPrintingHistory)
     }).catch((error) => {
       console.log(error)
-      setPrintingHistory(hard_code_printing_history_item)
+      setPrintingHistory(samplePrintedFiles);
     })
   }
 
@@ -50,17 +49,8 @@ const AdminPersonalInformationPage = () => {
         setIsLoading(true);
 
         // Fetch data here
-        // getPersonalInformation();
-        // getPrintingHistory();
-
-        const personalData = hard_code_personal_data;
-        const printHistory = hard_code_printing_history_item;
-
-        setPersonalInfo(personalData)
-        setPrintingHistory(printHistory)
-        setAvatarImage(AvtSvg)
-
-        console.log("personalData: ", personalData)
+        await getPersonalInformation();
+        await getPrintingHistory();
       } catch (error) {
         console.error("Error when loading page:", error)
       } finally {
@@ -88,7 +78,7 @@ const AdminPersonalInformationPage = () => {
           <div className="flex flex-col space-y-3 p-4 w-full items-center bg-white rounded-lg drop-shadow">
             <div className="flex flex-row w-full justify-between items-start">
               <div className="flex flex-row space-x-3 w-full justify-start items-center">
-                <AvatarImage fill="#679F38" className="w-28 h-28"/>
+                <AvtSvg fill="#679F38" className="w-28 h-28"/>
                 <p className="text-2xl font-bold text-blue">{personalInfo.name}</p>
               </div>
               <CloseSvg className="w-8 h-8 cursor-pointer" fill="#0388B4" onClick={() => navigate("/admin/printing_history")}/>
