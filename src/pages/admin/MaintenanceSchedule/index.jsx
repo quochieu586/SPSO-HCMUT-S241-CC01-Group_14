@@ -51,12 +51,14 @@ const MaintenanceSchedulePage = () => {
       await AdminService.addMaintenanceSchedule(newPlan.title, newPlan.description, startTime, "Tran Quoc Trung", newPlan.duration)
       .then(() => {
         setMaintenancePlans([...maintenancePlans, newPlan]);
+        setNewPlan({ title: "", startDate: "", startHour: 0, duration: 0, description: "" }); // Reset ô nhập
       })
       .catch((err) => {
         alert("Can not add file due to error: " + err);
-      }).finally(() => {
-        setNewPlan({ title: "", startDate: "", startHour: 0, duration: 0, description: "" }); // Reset ô nhập
       })
+      // .finally(() => {
+        
+      // })
     } else {
       alert("Invalid input !")
     }
@@ -91,7 +93,7 @@ const MaintenanceSchedulePage = () => {
       {/* Lịch bảo trì */}
       <div className="bg-white p-4 rounded-lg flex flex-col space-y-2 drop-shadow">
         <h2 className="text-2xl font-bold text-blue">Maintenance Schedule</h2>
-        {~maintenancePlans ? (
+        {maintenancePlans == [] ? (
             <p className="text-gray-500">There is no any maintenance schedule yet !</p>
           ) : (
           maintenancePlans.map((plan, index) => (

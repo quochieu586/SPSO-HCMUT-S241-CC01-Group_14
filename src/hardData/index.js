@@ -55,9 +55,9 @@ export const sampleAdminPrintedFiles = [
     { docName: "05_Ch5_Introduction_OOP.pdf", printTime: "20:16PM 13/10/2024", 
         studentName: "Tran Quoc Trung", copies: 10, place: "B1-01", studentId: "2252859" },
     { docName: "03_Ch3_4 Requirements Engineering.pdf", printTime: "20:16PM 13/10/2024", 
-        studentName: "Tran Quoc Trung", copies: 10, place: "B1-01", studentId: "2252859" },
+        studentName: "Default user", copies: 10, place: "B1-01", studentId: "101" },
     { docName: "Capstone_Project_Autumn_2023.pdf", printTime: "20:16PM 13/10/2024", 
-        studentName: "Tran Quoc Trung", copies: 10, place: "B1-01", studentId: "2252859" },    
+        studentName: "Default user", copies: 10, place: "B1-01", studentId: "101" },    
 ]
 
 export const samplePrintedFiles = [

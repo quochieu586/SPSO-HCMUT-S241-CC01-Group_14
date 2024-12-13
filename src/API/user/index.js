@@ -47,9 +47,9 @@ const printFile = ({fileName, pages, printer, copy}) => {
 }
 
 const confirmPrinting = (session_id) => {
-    const query = "/available_printers"
+    const query = "/confirm_printing"
     const payload = {
-        session_id: session_id,
+        fileId: session_id,
     }
 
     return userAPI.post(query, payload)

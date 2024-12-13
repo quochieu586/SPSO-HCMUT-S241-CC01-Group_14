@@ -17,7 +17,7 @@ const getPersonalInformation = (studentId) => {
 }
 
 const getPrinters = () => {
-    const query = "/get_printers_status"
+    const query = "/get_all_printers_status"
 
     return adminAPI.get(query)
 }
@@ -36,6 +36,8 @@ const getMaintenanceList = (ended = false) => {
 
 // POST APIs
 const togglePrinterStatus = (printerId) => {
+    console.log(printerId)
+
     const query = "/toggle_status"
     const payload = {
         printerId: printerId

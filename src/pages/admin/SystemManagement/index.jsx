@@ -79,44 +79,27 @@ const SystemManagementPage = () => {
 
   // State to manage the A4 paper count
   const [a4Count, setA4Count] = useState(50); // Default value for A4 paper count
-
-  const [machines, setMachines] = useState(
-    filterPrinterList.map((printer, index) => ({
-      id: index + 1,
-      name: printer,  // Dynamic printer name
-      status: "Active", // Initial status is "Active"
-      color: "#07C656", // Color when "Active"
-      buttonText: "Stop", // Initial button text is "Stop"
-    }))
-  );
+  const [machines, setMachines] = useState([]);
 
   // Function to toggle the machine status when the button is clicked
-  const toggleMachineStatus = async (id) => {
-    setLoadingPrinters(true)
+  const toggleMachineStatus = async (printerId) => {
+    setLoadingPrinters(true);
 
-    AdminService.togglePrinterStatus(id)
-      .then((res) => {
-        setMachines(res.data.payload)    
-      })
+    const toggleStatus = (status) => {
+      return (status === "AVAILABLE") ? "UNAVAILABLE" : "AVAILABLE"; 
+    }
+
+    AdminService.togglePrinterStatus(printerId)
       .catch((error) => {
         alert("Error when disabled / enabled printer: " + error.message)
       })
       .finally(() => {
-        // Hard code
-        setMachines((prevMachines) =>
-          prevMachines.map((machine) =>
-            machine.id === id
-              ? {
-                  ...machine,
-                  status: machine.status === "Active" ? "Stop" : "Active",
-                  color: machine.status === "Active" ? "#FF0000" : "#07C656", // Change color
-                  buttonText: machine.status === "Active" ? "Activate" : "Stop", // Change button text
-                }
-              : machine
-          )
-        );
-
-        setLoadingPrinters(false)
+        setMachines(machines.map((printer) => ({
+          name: printer.name,
+          status: printer.name === printerId ? toggleStatus(printer.status) : printer.status,
+          note: printer.note, 
+        })))
+        setLoadingPrinters(false);
       })
   };
 
@@ -124,9 +107,18 @@ const SystemManagementPage = () => {
     const getData = async () => {
       await AdminService.getPrinters()
       .then((res) => {
-        console.log(res);
+        console.log(res.data);
+        setMachines(res.data);
       }).catch((err) => {
         console.log(err);
+        
+        let printers = filterPrinterList.map((printer) => ({
+          name: printer,
+          status: "AVAILABLE",
+          note: "No note",
+        }));
+        setMachines(printers);
+       
       })
     }
 
@@ -311,7 +303,7 @@ const SystemManagementPage = () => {
 
                   <div className="flex">
                     <p className="text-sm font-bold pr-2 w-16">Status: </p>
-                    <p className="text-sm" style={{ color: machine.color }}>
+                    <p className={`text-sm ${machine.status === "AVAILABLE" ? "text-green" : "text-gray-dark"}`}>
                       {machine.status}
                     </p>
                   </div>
@@ -325,10 +317,10 @@ const SystemManagementPage = () => {
 
                   <div className="flex pl-[77px]">
                     <button
-                      onClick={() => toggleMachineStatus(machine.id)}
-                      className={`w-[92px] h-[32px] text-[14px] font-bold text-white rounded-lg ${machine.color === "#07C656" ? "bg-blue" : "bg-[#808080]"}`}
+                      onClick={() => toggleMachineStatus(machine.name)}
+                      className={`w-[92px] h-[32px] text-[14px] font-bold text-white rounded-lg ${machine.status === "AVAILABLE" ? "bg-blue" : "bg-[#808080]"}`}
                     >
-                      {machine.buttonText}
+                      {machine.status === "AVAILABLE" ? "Stop" : "Active"}
                     </button>
                   </div>
                 </div>
