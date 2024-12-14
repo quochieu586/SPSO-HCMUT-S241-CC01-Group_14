@@ -50,6 +50,7 @@ const confirmPrinting = (session_id) => {
     const query = "/confirm_printing"
     const payload = {
         fileId: session_id,
+        dele: true,
     }
 
     return userAPI.post(query, payload)
