@@ -1,9 +1,18 @@
 import HCMUTLogo from "../../assets/images/HCMUT_official_logo.png";
 import HMCUTLoginImage from "../../assets/images/hcmut_libary_image.png"
 import HCMUTImage from "../../assets/images/HCMUT_logo.png"
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { samplePrintedFiles, sampleWaitingFiles } from "../PrintDocument/hardcode_data";
 
 const LoginPage = () => {
+    const navigate = useNavigate();
+
+    const handleStudentLogin = () => {
+        localStorage.setItem("waiting_sessions", JSON.stringify(sampleWaitingFiles));
+        localStorage.setItem("printing_history", JSON.stringify(samplePrintedFiles));
+        navigate("/user/student_information")
+    }
+
     return (
         <div className="flex-1 h-screen">
             <div className="flex w-full bg-blue px-4 justify-start">
@@ -23,12 +32,12 @@ const LoginPage = () => {
                         <p className="text-2xl font-bold text-[#002799]">Log in using your account on:</p>
                     </div>
                     <div className="w-full flex flex-col space-y-[6px]">
-                        <NavLink className="flex flex-row space-x-4 w-full py-3 items-center justify-center rounded-lg border border-[#DDDDDD]"
-                            to="/user/student_information"
+                        <div className="flex flex-row space-x-4 w-full py-3 items-center justify-center rounded-lg border border-[#DDDDDD]"
+                            onClick={handleStudentLogin}
                         >
                             <img src={HCMUTImage} alt="HCMUT_logo_login" className="w-7 h-7"/>
                             <p className="text-black font-normal text-sm">HCMUT (HCMUT account)</p>
-                        </NavLink>
+                        </div>
                         <NavLink className="w-full py-3 flex items-center justify-center rounded-lg border border-[#DDDDDD]"
                             to="/admin/manage_system"
                         >
