@@ -23,7 +23,7 @@ const AdminPersonalInformationPage = () => {
   const AvatarImage = AvtSvg;
 
   return (
-    <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full h-full">
+    <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full overflow-y-auto max-h-screen h-screen">
       <Header pageName="Personal Information" description="This is your main page."/>
       <div className="flex flex-row space-x-6 w-full">
         <div className="flex flex-col space-y-8 w-[42%]">

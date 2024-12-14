@@ -52,7 +52,7 @@ const PrintPagePrintingMode = () => {
 
       setNumberOfPage(numPages);
       setSelectedPageRange([1, numPages]);
-      setNeededA4(numPages);
+      // setNeededA4(numPages);
       setFile(newFile);
       setLoadingPDF(false)
     }
@@ -60,7 +60,7 @@ const PrintPagePrintingMode = () => {
 
   useEffect(() => {
     setNeededA4(selectedCopies * numberOfPage);
-  }, [selectedCopies])
+  }, [selectedCopies, file])
 
   const handlePrint = () => {
     const printedFile = {
