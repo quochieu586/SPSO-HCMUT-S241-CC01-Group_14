@@ -75,11 +75,8 @@ const PrintingHistoryPage = () => {
 
     AdminService.getPrintingHistory(fetchData)
     .then((res) => {
-      console.log(res)
-
-      const data = res.data;
-      setPrintedDocs(data);
-      // Continue
+      console.log(res.data);
+      setPrintedDocs(res.data);
     }).catch((err) => {
       setPrintedDocs(sampleAdminPrintedFiles);
     }).finally(() => {

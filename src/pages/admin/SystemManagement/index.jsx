@@ -27,6 +27,7 @@ const SystemManagementPage = () => {
   const [newFileType, setNewFileType] = useState("");
   const [isLoadingFileTypes, setLoadingFileTypes] = useState(false);
   const [isloadingPrinters, setLoadingPrinters] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
 
   // Function to remove a file type
@@ -43,7 +44,7 @@ const SystemManagementPage = () => {
       setFileTypes(newFileTypes);
     })
     .catch((error) => {
-      alert("Error when adding new file type: " + error.message)
+      alert("This functionality is not supported yet !")
     })
     .finally(() => {
       setLoadingFileTypes(false)
@@ -61,7 +62,7 @@ const SystemManagementPage = () => {
         setFileTypes(newFileTypes);
       })
       .catch((error) => {
-        alert("Error when adding new file type: " + error.message)
+        alert("This functionality is not supported yet !")
       })
       .finally(() => {
         setNewFileType(""); // Clear the input field after adding
@@ -104,6 +105,8 @@ const SystemManagementPage = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
+
     const getData = async () => {
       await AdminService.getPrinters()
       .then((res) => {
@@ -119,11 +122,23 @@ const SystemManagementPage = () => {
         }));
         setMachines(printers);
        
+      }).finally(() => {
+        setIsLoading(false);
       })
     }
 
     getData();
   }, [])
+
+  
+  // Loading page
+  if (isLoading) {
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <p className="font-bold text-4xl text-blue">Loading...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full">

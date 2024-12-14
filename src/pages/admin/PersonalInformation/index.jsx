@@ -27,8 +27,8 @@ const AdminPersonalInformationPage = () => {
       // Fetch data here
       await AdminService.getPersonalInformation(studentId)
       .then((res) => {
-        const fetchPersonalInfo = res.data;
-        setPersonalInfo(defaultPersonalData);
+        console.log(res.data);
+        setPersonalInfo(res.data);
       }).catch((err) => {
         console.error(err);
         setPersonalInfo(defaultPersonalData);
@@ -38,9 +38,8 @@ const AdminPersonalInformationPage = () => {
       .then((res) => {
         const fetchPrintingHistory = res.data;
 
-        console.log(fetchPrintingHistory);
-
-        setPrintingHistory(fetchPrintingHistory)
+        setPrintingHistory(fetchPrintingHistory);
+        console.log(res.data);
       }).catch((err) => {
         console.error(err);
         setPrintingHistory(sampleAdminPrintedFiles.filter((x) => x.studentName === personalInfo.name));
@@ -117,7 +116,7 @@ const AdminPersonalInformationPage = () => {
             <p className="text-2xl font-bold text-blue">Printing History</p>
             {printingHistory.map((item) => {
               return (
-                <PrintingHistoryItem printTime={item.printTime} docName={item.docName} page={item.pages} 
+                <PrintingHistoryItem printTime={item.printTime} docName={item.docName} page="5" 
                                     place={item.place} copies={item.copies}/>
               )})} 
           </div>

@@ -2,10 +2,14 @@ import adminAPI from "../../config/admin";
 
 // GET API
 const getPrintingHistory = ({ printer, area, studentId }) => {
-    const query = `/printing_history?
-    ${printer ? `printer=${printer}&` : ''}
-    ${area ? `area=${area}&` : ''}
-    ${studentId ? `studentId=${studentId}&` : ''}`
+    const query = `/printing_history?${printer ? `printer=${printer}&` : ''}${area ? `area=${area}&` : ''}${studentId ? `studentId=${studentId.toString()}&` : ''}`
+
+    // const payload = {};
+    // if (printer) { payload["printer"] = printer; }
+    // if (area) { payload["area"] = area; }
+    // if (studentId) { payload["studentId"] = studentId; }
+
+    // console.log(payload);
 
     return adminAPI.get(query)
 }

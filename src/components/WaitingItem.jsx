@@ -5,11 +5,7 @@ import { ReactComponent as HistorySvg} from "../assets/svgs/history.svg"
 import { useEffect } from "react";
 
 const WaitingItem = ({ registerTime, docName, page, place, copies, isPrinted, 
-        waitingTime, printedTime, onButtonClick }) => {
-
-    useEffect(() => {
-        console.log(waitingTime);
-    }, [])
+        printedTime, onButtonClick }) => {
 
     return (
         <div className="flex flex-col w-full space-y-2 items-start p-3 rounded-lg drop-shadow bg-white">
@@ -48,7 +44,7 @@ const WaitingItem = ({ registerTime, docName, page, place, copies, isPrinted,
                     <div className="flex flex-row gap-1">
                         <HistorySvg fill="#F40F0F" />
                         <p className="font-semibold text-[#F40F0F] text-base">Expected waiting time: </p>
-                        <p className="text-[#F40F0F] text-base">{waitingTime} minute</p>
+                        <p className="text-[#F40F0F] text-base">1 minute</p>
                     </div>
                     <div className="flex flex-row justify-between items-center">
                         <p/>

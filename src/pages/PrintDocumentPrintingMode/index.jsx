@@ -14,7 +14,7 @@ const PrintPagePrintingMode = () => {
   const [selectedCopies, setSelectedCopies] = useState(1);
   const [selectedBuilding, setSelectedBuilding] = useState("");
   const [printerList, setPrinterList] = useState([]);
-  const [selectedPrinter, setSelectedPrinter] = useState("B1-01");
+  const [selectedPrinter, setSelectedPrinter] = useState("");
   const [numberOfPage, setNumberOfPage] = useState(null);
   const [neededA4, setNeededA4] = useState(null);
 
@@ -33,23 +33,22 @@ const PrintPagePrintingMode = () => {
       setPrinterList(allFilterList)
     } else {
       setPrinterList(allFilterList.filter((x) => x.split("-")[0] === selectedBuilding))
+      setSelectedPrinter("");
     }
   }, [selectedBuilding])
 
   const handlePrint = async () => {
-    const printedFile = {
-      fileName: file.name,
-      pages: numberOfPage,
-      printer: selectedPrinter,
-      copy: selectedCopies,
+    if (selectedPrinter !== "") {
+      await UserService.printFile(file.name, numberOfPage, selectedPrinter, selectedCopies)
+      .then(() => {
+        navigate("/user/print_document");
+      })
+      .catch((err) => {
+        alert("Can not print document due to error: " + err);
+      })
+    } else {
+      alert("Not select printer !");
     }
-
-    await UserService.printFile(printedFile)
-    .catch((err) => {
-      console.log(err)
-    }).finally(() => {
-      navigate("/user/print_document");
-    })
   };
 
   /*      USE EFFECT        */
@@ -68,7 +67,6 @@ const PrintPagePrintingMode = () => {
 
         setAllFilterList(sampleFilterPrinterList);
         let listAreas = [...new Set(sampleFilterPrinterList.map(item => item.split("-")[0])), "All"];
-
         setAreas(listAreas);
       }).finally(() => {
         if (!file && location.state?.file) {

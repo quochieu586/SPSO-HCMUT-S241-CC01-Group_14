@@ -15,38 +15,34 @@ const PersonalInformationPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        setIsLoading(true);
+      setIsLoading(true);
 
-        // Fetch data here
-        await UserService.getPersonalInformation()
-        .then((res) => {
-          const fetchPersonalInfo = res.data;
+      // Fetch data here
+      await UserService.getPersonalInformation()
+      .then((res) => {
+        const fetchPersonalInfo = res.data;
 
-          console.log(res)
+        console.log(res)
 
-          setPersonalInfo(fetchPersonalInfo);
-        }).catch((err) => {
-          console.error(err);
-          setPersonalInfo(defaultPersonalData);
-        })
+        setPersonalInfo(fetchPersonalInfo);
+      }).catch((err) => {
+        console.error(err);
+        setPersonalInfo(defaultPersonalData);
+      })
 
-        await UserService.getPrintingHistory()
-        .then((res) => {
-          const fetchPrintingHistory = res.data;
-          setPrintingHistory(fetchPrintingHistory)
-        }).catch((err) => {
-          console.error(err);
-          setPrintingHistory(samplePrintedFiles);
-        })
-        
-        const studentId = localStorage.getItem('studentId');
-        setStudentId(studentId)
-      } catch (error) {
-        console.error("Error when loading page:", error)
-      } finally {
-        setIsLoading(false)
-      }
+      await UserService.getPrintingHistory()
+      .then((res) => {
+        const fetchPrintingHistory = res.data;
+        setPrintingHistory(fetchPrintingHistory)
+      }).catch((err) => {
+        console.error(err);
+        setPrintingHistory(samplePrintedFiles);
+        alert("Connect to Backend fail ! Use default mode instead !")
+      })
+      
+      const studentId = localStorage.getItem('studentId');
+      setStudentId(studentId);
+      setIsLoading(false);
     }
 
     fetchData();

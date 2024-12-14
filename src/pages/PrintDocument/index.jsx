@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Header from "../../components/Header";
 import { ReactComponent as UploadSvg } from "../../assets/svgs/upload.svg"
 import { deltaTime, formatDateTime } from "../../utils/functions"
@@ -20,7 +20,8 @@ const PrintDocumentPage = () => {
   const [currentWaitingFile, setCurrentWaitingFile] = useState(null);
   const navigate = useNavigate();
   const [printingHistory, setPrintingHistory] = useState([]);
-  
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleOpenFile = () => {
     fileInputRef.current.click();
   }
@@ -72,58 +73,60 @@ const PrintDocumentPage = () => {
   
   const closeModal = () => setShowModal(false);
 
-  const onConfirmFileClick = () => {
+  const dataLoading = useCallback(async () => {
+    setIsLoading(true);
+
+    await UserService.getWaitingSession()
+    .then((res) => {
+      const waitingSessions = res.data;
+      console.log(waitingSessions);
+      setWaitingFiles(waitingSessions);
+    }).catch((err) => {
+      console.error(err);
+
+      setWaitingFiles(sampleWaitingFiles);
+    })
+
+    await UserService.getPrintingHistory()
+    .then((res) => {
+      const printingHistoryData = res.data;
+      setPrintingHistory(printingHistoryData);
+      console.log(printingHistoryData);
+    }).catch((err) => {
+      console.error(err);
+
+      setPrintingHistory(samplePrintedFiles);
+    })
+
+    setIsLoading(false);
+  }, [])
+
+  
+  const onConfirmFileClick = async () => {
     if (currentWaitingFile != null) {
-      let file = {
-        page: currentWaitingFile.page,
-        place: currentWaitingFile.place,
-        copies: currentWaitingFile.copies,
-        date: new Date("11-12-2024"),
-        fileName: currentWaitingFile.fileName,
-        lastModified: new Date(),
-      };
-
-      let new_waiting_list = waitingFiles.filter((file) => file !== currentWaitingFile);
-      let new_printing_history = [file, ...printingHistory];
-
-      localStorage.setItem("waiting_sessions", JSON.stringify(new_waiting_list));
-      localStorage.setItem("printing_history", JSON.stringify(new_printing_history));
-      setWaitingFiles(new_waiting_list);
-      setPrintingHistory(new_printing_history);
+      await UserService.confirmPrinting(currentWaitingFile.fileId)
+      .then(() => {
+        dataLoading();
+      }).catch((err) => {
+        alert("Error when confirming: " + err)
+      })
     }
     closeModal();
   }
 
   /*    USE EFFECT     */
   useEffect(() => {
-    const dataLoading = async () => {
-      await UserService.getWaitingSession()
-      .then((res) => {
-        const waitingSessions = res.data;
-        console.log(waitingSessions);
-        setWaitingFiles(waitingSessions);
-      }).catch((err) => {
-        console.error(err);
-
-        setWaitingFiles(sampleWaitingFiles);
-
-        console.log(sampleWaitingFiles);
-      })
-
-      await UserService.getPrintingHistory()
-      .then((res) => {
-        const printingHistoryData = res.data;
-        setPrintingHistory(printingHistoryData);
-      }).catch((err) => {
-        console.error(err);
-
-        setPrintingHistory(samplePrintedFiles);
-      })
-    } 
-
     dataLoading();
-  }, [])
+  }, [dataLoading])
 
+  // Loading page
+  if (isLoading) {
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <p className="font-bold text-4xl text-blue">Loading...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full overflow-y-auto max-h-screen h-screen">
@@ -154,7 +157,7 @@ const PrintDocumentPage = () => {
                   <PrintingHistoryItem 
                     printTime={print_log.time}
                     docName={print_log.fileName}
-                    page={print_log.pages} place={print_log.printer} copies={print_log.copy}
+                    page={print_log.pages} place={print_log.printer} copies={print_log.copy || print_log.copies}
                   />
                 </button>
               ))}
@@ -174,8 +177,7 @@ const PrintDocumentPage = () => {
                 place={waiting_file.printer}
                 copies={waiting_file.copies}
                 isPrinted={waiting_file.status}
-                waitingTime={deltaTime(waiting_file.submission_time, waiting_file.expected_time)}
-                printedTime={waiting_file.completion_time}
+                printedTime={waiting_file.time}
                 onButtonClick={() => openModal(waiting_file)}
                 onConfirmClick={() => onConfirmFileClick(waiting_file)}
                 />

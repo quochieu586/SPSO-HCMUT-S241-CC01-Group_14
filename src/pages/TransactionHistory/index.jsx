@@ -11,6 +11,7 @@ const TransactionHistoryPage = () => {
   // Initialize state from local storage or as an empty array
   const [transactionData, setTransactionData] = useState([]);
   const [totalA4Papers, setTotalA4Papers] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   // const { state } = useLocation();
   // const { selectedOption } = state || {};
@@ -44,6 +45,8 @@ const TransactionHistoryPage = () => {
   /*    USE EFFECT    */
   useEffect(() => {
     const loadData = async () => {
+      setIsLoading(true);
+
       await UserService.getTransactionHistory()
       .then((res) => {
         console.log(res.data);
@@ -59,6 +62,8 @@ const TransactionHistoryPage = () => {
       }).catch((err) => {
         setTotalA4Papers(defaultPersonalData.numberOfA4);
       })
+
+      setIsLoading(false);
     }
 
     loadData();
@@ -66,6 +71,16 @@ const TransactionHistoryPage = () => {
 
   // Calculate totals
   const totalTransactions = transactionData.length;
+
+  
+  // Loading page
+  if (isLoading) {
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <p className="font-bold text-4xl text-blue">Loading...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full overflow-y-auto max-h-screen h-screen">

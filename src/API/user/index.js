@@ -32,13 +32,13 @@ const getAvailablePrinters = () => {
 }
 
 // POST APIs
-const printFile = ({fileName, pages, printer, copy}) => {
+const printFile = (fileName, pages, printer, copies) => {
     const query = "/print_document"
     const payload = {
         fileName: fileName,
         pages: pages,
         printer: printer,
-        copy: copy,
+        copies: copies,
     }
 
     console.log(payload);

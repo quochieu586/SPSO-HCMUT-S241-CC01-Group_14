@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import Header from "../../../components/Header";
 import { TrashIcon } from '@heroicons/react/outline'; // Biểu tượng thùng rác
 import { useEffect } from "react";
@@ -34,6 +34,25 @@ const MaintenanceSchedulePage = () => {
     }
   }
 
+  // Hàm xử lý xóa kế hoạch bảo trì
+  const handleDeletePlan = (index) => {
+    alert("Delete schedule paly is not yet supported !")
+    const updatedPlans = maintenancePlans.filter((_, i) => i !== index);
+    setMaintenancePlans(updatedPlans);
+  };
+
+  const dataLoading = useCallback(async () => {
+    AdminService.getMaintenanceList()
+    .then((res) => {
+      console.log(res.data);
+      setMaintenancePlans(res.data);
+    }).catch((err) => {
+      console.error(err);
+      setMaintenancePlans(sampleMaintenancelans);
+    })
+  }, [])
+
+  
   // Hàm xử lý thêm kế hoạch bảo trì vào đầu danh sách
   const handleAddPlan = async () => {
     if (
@@ -52,38 +71,19 @@ const MaintenanceSchedulePage = () => {
       .then(() => {
         setMaintenancePlans([...maintenancePlans, newPlan]);
         setNewPlan({ title: "", startDate: "", startHour: 0, duration: 0, description: "" }); // Reset ô nhập
+        dataLoading();
       })
       .catch((err) => {
         alert("Can not add file due to error: " + err);
       })
-      // .finally(() => {
-        
-      // })
     } else {
       alert("Invalid input !")
     }
   };
 
-  // Hàm xử lý xóa kế hoạch bảo trì
-  const handleDeletePlan = (index) => {
-    const updatedPlans = maintenancePlans.filter((_, i) => i !== index);
-    setMaintenancePlans(updatedPlans);
-  };
-
   useEffect(() => {
-    const loadData = async () => {
-      AdminService.getMaintenanceList()
-      .then((res) => {
-        console.log(res.data);
-        setMaintenancePlans(res.data);
-      }).catch((err) => {
-        console.error(err);
-        setMaintenancePlans(sampleMaintenancelans);
-      })
-    }
-
-    loadData()
-  }, [])
+    dataLoading()
+  }, [dataLoading])
 
   return (
     <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full">
