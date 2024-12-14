@@ -32,7 +32,7 @@ const LoginPage = () => {
                         <p className="text-2xl font-bold text-[#002799]">Log in using your account on:</p>
                     </div>
                     <div className="w-full flex flex-col space-y-[6px]">
-                        <div className="flex flex-row space-x-4 w-full py-3 items-center justify-center rounded-lg border border-[#DDDDDD]"
+                        <div className="flex flex-row space-x-4 w-full py-3 items-center justify-center rounded-lg border border-[#DDDDDD] cursor-pointer"
                             onClick={handleStudentLogin}
                         >
                             <img src={HCMUTImage} alt="HCMUT_logo_login" className="w-7 h-7"/>
