@@ -90,7 +90,7 @@ const PrintingHistoryPage = () => {
   }, [filterMode, filterArea, filterPrinter])
 
   return (
-    <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full">
+    <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full overflow-y-auto max-h-screen h-screen">
       <Header pageName="Printing History Page" description="Manage the printing history."/>
       
       <div className="flex flex-row space-x-6 w-full">

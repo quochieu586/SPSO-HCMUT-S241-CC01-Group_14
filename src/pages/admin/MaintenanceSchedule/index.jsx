@@ -86,7 +86,7 @@ const MaintenanceSchedulePage = () => {
   }, [dataLoading])
 
   return (
-    <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full">
+    <div className="flex flex-col space-y-5 bg-gray-100 p-6 w-full overflow-y-auto max-h-screen h-screen">
       {/* Header */}
       <Header pageName="Maintenance Schedule Page" description="Create and update system maintenance schedule."/>
 
