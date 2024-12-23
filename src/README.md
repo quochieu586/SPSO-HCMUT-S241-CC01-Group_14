@@ -9,9 +9,9 @@ In this repository, we develop two versions: **backend-free version** (branch `m
 
 ## Fully-implemtented application
 
-- In this version, along with this Frontend application, you need to start our Backend application, which is avaiable in [CC01-Group-14-Backend](https://github.com/NhtJm/backend).
+- In this version, along with this Frontend application, you need to start our Backend application, which is avaiable in [CC01-Group-14-Backend](https://github.com/NhtJm/SPSO-HCMUT-S241-CC01-Group_14/tree/main).
 - This version is avaiable in the branch `SPSS-Backend-Available-Version`, where to need to use `git checkout` and `pull` code for this branch.
-- Please follow the detail tutorial of the repository in [README.md](https://github.com/NhtJm/backend/blob/main/README.md) to run the program. 
+- Please follow the detail tutorial of the repository in [README.md](https://github.com/NhtJm/SPSO-HCMUT-S241-CC01-Group_14/blob/main/README.md) to run the program. 
 
 # B. How to run the application ?
 
